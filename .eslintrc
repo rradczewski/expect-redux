@@ -1,0 +1,36 @@
+{
+  "root": "true",
+  "plugins": [
+    "import"
+  ],
+  "extends": [
+    "eslint:recommended"
+  ],
+  "parserOptions": {
+    "sourceType": "module"
+  },
+  "env": {
+    "es6": true,
+    "shared-node-browser": true,
+    "mocha": true
+  },
+  "rules": {
+    "eqeqeq": ["error", "allow-null"],
+    "semi": ["error", "always"],
+    "no-case-declarations": "off",
+    "no-console": "off",
+    "no-shadow": "error",
+    "indent": ["error", 2],
+    "quotes": ["error", "single", {"avoidEscape": true}],
+    "import/no-unresolved": "error",
+    "import/named": "error",
+    "import/default": "error",
+    "import/namespace": "error",
+    "import/export": "error",
+    "import/no-named-as-default": "error",
+    "import/no-commonjs": "error",
+    "import/no-amd": "error",
+    "import/imports-first": "error",
+    "import/no-duplicates": "error"
+  }
+}

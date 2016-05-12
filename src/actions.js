@@ -23,4 +23,4 @@ export default function() {
     }),
     matching: obj => typeof obj === 'function' ? matchingPredicate(obj) : matchingObject(obj)
   };
-};
+}

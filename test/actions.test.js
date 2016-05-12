@@ -55,7 +55,7 @@ describe('Testing actions', () => {
           // Finish successfully after dispatching the action
           setTimeout(() => failed ? undefined : done(), 10);
         }
-      )
+      );
     });
   });
 
@@ -87,7 +87,7 @@ describe('Testing actions', () => {
           // Finish successfully after dispatching the action
           setTimeout(() => failed ? undefined : done(), 10);
         }
-      )
+      );
     });
 
   });
@@ -120,7 +120,7 @@ describe('Testing actions', () => {
           // Finish successfully after dispatching the action
           setTimeout(() => failed ? undefined : done(), 10);
         }
-      )
+      );
     });
   });
 
@@ -154,7 +154,7 @@ describe('Testing actions', () => {
           // Finish successfully after dispatching the action
           setTimeout(() => failed ? undefined : done(), 10);
         }
-      )
+      );
     });
   });
 });
