@@ -4,6 +4,7 @@
   "description": "Async expect matchers for redux",
   "main": "index.js",
   "scripts": {
+    "build": "babel --copy-files -d lib/ src/",
     "test": "mocha"
   },
   "repository": {
