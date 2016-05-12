@@ -22,7 +22,6 @@ describe('Testing actions', () => {
     it('works on eventually dispatched actions', (done) => {
       const store = createStore(identity, {}, storeSpy);
 
-
       expect(store)
         .toDispatchAnAction()
         .ofType('TEST_ACTION')
