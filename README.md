@@ -23,7 +23,7 @@ describe('my action dispatcher', () => {
     const store = createStore(state => state, {}, storeSpy);
     
     // Dispatch the action after declaring our expectation
-    window.setTimeout(() => store.dispatch({type: 'MY_CUSTOM_ACTION'}), 100);
+    setTimeout(() => store.dispatch({type: 'MY_CUSTOM_ACTION'}), 100);
     
     return expect(store)
       .toDispatchAnAction()
