@@ -57,3 +57,9 @@ Matches an action that satisfies the given `predicate`. predicate must be a func
 ### `ofType(type).matching(predicate)`
 
 Matches an action that both is of type `type` and satisfies the given `predicate`. Like above, predicate must be a function `action => boolean`.
+
+
+## Similar or related libraries
+
+- [redux-action-assertions](https://github.com/dmitry-zaets/redux-actions-assertions)
+- [redux-mock-store](https://github.com/arnaudbenard/redux-mock-store)
