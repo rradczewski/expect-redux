@@ -4,6 +4,10 @@
 # expect-redux
 Assertions for testing a redux store and the actions dispatched to it using [`mocha`](https://mochajs.org/) and its [`Promise`](https://mochajs.org/#asynchronous-code)-Interface with [`expect`](https://github.com/mjackson/expect) Matchers 
 
+I developed a first rudimentary version of `expect-redux` for use in our projects at [@VaamoTech](https://twitter.com/VaamoTech) for [Vaamo](https://vaamo.de). 
+
+## Installation
+
 ```sh
 npm install expect-redux
 ```
