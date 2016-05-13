@@ -1,5 +1,7 @@
-![CI](https://travis-ci.org/rradczewski/expect-redux.svg)
-![Deps](https://david-dm.org/rradczewski/expect-redux.svg) ![DevDeps](https://david-dm.org/rradczewski/expect-redux/dev-status.svg)
+[![npm version](https://badge.fury.io/js/expect-redux.svg)](https://badge.fury.io/js/expect-redux)
+
+[![CI](https://travis-ci.org/rradczewski/expect-redux.svg)](https://travis-ci.org/rradczewski/expect-redux)
+[![Deps](https://david-dm.org/rradczewski/expect-redux.svg)](https://david-dm.org/rradczewski/expect-redux) [![DevDeps](https://david-dm.org/rradczewski/expect-redux/dev-status.svg)](https://david-dm.org/rradczewski/expect-redux)
 
 # expect-redux
 Assertions for testing a redux store and the actions dispatched to it using [`mocha`](https://mochajs.org/) and its [`Promise`](https://mochajs.org/#asynchronous-code)-Interface with [`expect`](https://github.com/mjackson/expect) Matchers 
