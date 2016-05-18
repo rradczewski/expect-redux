@@ -132,7 +132,7 @@ describe('Testing actions', () => {
           .toDispatchAnAction()
           .ofType('TEST_ACTION')
           .matching(propEq('payload', 42))
-          .then(done, done)
+          .then(() => done(), done)
     );
 
     describe('does not succeed if it', () => {

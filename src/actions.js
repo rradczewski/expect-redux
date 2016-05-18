@@ -1,4 +1,4 @@
-import { propEq, equals, both } from 'ramda';
+import { propEq, equals } from 'ramda';
 
 export default function() {
   const store = this.actual;
@@ -19,7 +19,7 @@ export default function() {
 
   return {
     ofType: type => Object.assign(expectation(propEq('type', type)), {
-      matching: pred => expectation(both(propEq('type', type), pred))
+      matching: pred => Promise.all([this, expectation(pred)])
     }),
     matching: obj => typeof obj === 'function' ? matchingPredicate(obj) : matchingObject(obj)
   };
