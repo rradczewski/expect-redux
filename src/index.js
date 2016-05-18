@@ -3,6 +3,12 @@ import storeSpyLib from './storeSpy';
 
 export const storeSpy = storeSpyLib;
 
-export const expectRedux = {
+const expectMatchers = {
   toDispatchAnAction: actions
 };
+
+const standaloneExpect = (store) => Object.assign({
+  actual: store
+}, expectMatchers);
+
+export const expectRedux = Object.assign(standaloneExpect, expectMatchers);
