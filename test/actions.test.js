@@ -11,7 +11,7 @@ describe('Testing actions', () => {
     it('works on previously dispatched actions', done => {
       const store = createStore(identity, {}, storeSpy);
       store.dispatch(action);
-      return fun(store, done);
+      fun(store, done);
     });
 
 
@@ -19,7 +19,7 @@ describe('Testing actions', () => {
     it('works on eventually dispatched actions', done => {
       const store = createStore(identity, {}, storeSpy);
       setTimeout(() => store.dispatch(action));
-      return fun(store, done);
+      fun(store, done);
     });
 
   const testSyncAndAsync = (action, fun) => {
