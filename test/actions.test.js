@@ -135,6 +135,26 @@ describe('Testing actions', () => {
           .then(() => done(), done)
     );
 
+    it('should only match ONE action that satisfies both predicates', (done) => {
+      const store = createStore(identity, {}, storeSpy);
+      store.dispatch({ type: 'TEXT_ACTION_1', payload: 1 });
+      store.dispatch({ type: 'TEXT_ACTION_2', payload: 2 });
+      
+      let failed = false;
+      const fail = () => {
+        failed = true;
+        done(new Error('Predicates individually matched for at least one single action, but not for exactly the same'));
+      };
+
+      expect(store)
+        .toDispatchAnAction()
+        .ofType('TEST_ACTION_1')
+        .matching(propEq('payload', 2))
+        .then(fail);
+
+      setTimeout(() => failed ? undefined : done(), 10);
+    });
+
     describe('does not succeed if it', () => {
       testSyncAndAsync(
         { type: 'TEST_ACTION', payload: 42 },
