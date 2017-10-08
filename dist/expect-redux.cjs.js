@@ -4,9 +4,7 @@ Object.defineProperty(exports, '__esModule', { value: true });
 
 var ramda = require('ramda');
 
-var actions = function () {
-  var store = this.actual;
-
+var matchers = function matchers(store) {
   var expectation = function expectation(predicate) {
     return new Promise(function (resolve) {
       var resolver = function resolver(action) {
@@ -47,7 +45,15 @@ var actions = function () {
   };
 };
 
-var storeSpyLib = (function (nextCreateStore) {
+var matcher = (function (store) {
+  return {
+    toDispatchAnAction: function toDispatchAnAction() {
+      return matchers(store);
+    }
+  };
+});
+
+var storeEnhancer = function storeEnhancer(nextCreateStore) {
   return function (reducer, initialState, enhancer) {
     var actions = [];
     var expectations = [];
@@ -65,26 +71,13 @@ var storeSpyLib = (function (nextCreateStore) {
     };
 
     var store = nextCreateStore(recorder, initialState, enhancer);
-    store.actions = actions;
-    store.expectations = expectations;
 
-    return store;
+    return Object.assign({}, store, {
+      actions: actions,
+      expectations: expectations
+    });
   };
-});
-
-var storeSpy = storeSpyLib;
-
-var expectMatchers = {
-  toDispatchAnAction: actions
 };
 
-var standaloneExpect = function standaloneExpect(store) {
-  return Object.assign({
-    actual: store
-  }, expectMatchers);
-};
-
-var expectRedux = Object.assign(standaloneExpect, expectMatchers);
-
-exports.storeSpy = storeSpy;
-exports.expectRedux = expectRedux;
+exports.expectRedux = matcher;
+exports.storeSpy = storeEnhancer;
