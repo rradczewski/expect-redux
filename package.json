@@ -2,7 +2,7 @@
   "name": "expect-redux",
   "version": "3.0.0",
   "description": "Async expect matchers for redux",
-  "main": "dist/expect-redux.cjs.js",
+  "main": "dist/index.js",
   "module": "dist/expect-redux.esm.js",
   "scripts": {
     "build": "npm-run-all -s build:clean build:js build:flow",
