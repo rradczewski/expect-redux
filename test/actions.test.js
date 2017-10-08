@@ -3,6 +3,7 @@ import { storeSpy, expectRedux } from '../src/';
 
 import { identity, propEq } from 'ramda';
 
+
 describe('Testing actions', () => {
   const testPreviouslyDispatchedAction = (action, fun) =>
     it('works on previously dispatched actions', done => {

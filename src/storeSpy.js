@@ -1,8 +1,21 @@
-export default nextCreateStore => (reducer, initialState, enhancer) => {
-  const actions = [];
-  const expectations = [];
+// @flow
+import type { StoreEnhancer, Store } from 'redux';
 
-  const checkExpectations = action =>
+export type Action = { type: $Subtype<string> };
+export type StoreShape<S, A, D> = Store<S, A, D> & {
+  actions: Array<Action>,
+  expectations: Array<(Action) => void>
+};
+
+const storeEnhancer: StoreEnhancer<*, *, *> = nextCreateStore => (
+  reducer,
+  initialState,
+  enhancer
+) => {
+  const actions: Array<Action> = [];
+  const expectations: Array<(Action) => void> = [];
+
+  const checkExpectations = (action: Action): void =>
     expectations.forEach(expectation => expectation(action));
 
   const recorder = (state, action) => {
@@ -12,8 +25,11 @@ export default nextCreateStore => (reducer, initialState, enhancer) => {
   };
 
   const store = nextCreateStore(recorder, initialState, enhancer);
-  store.actions = actions;
-  store.expectations = expectations;
 
-  return store;
+  return (Object.assign({}, store, {
+    actions,
+    expectations
+  }): StoreShape<*, *, *>);
 };
+
+export default storeEnhancer;

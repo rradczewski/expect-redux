@@ -6,15 +6,22 @@
   "module": "dist/expect-redux.esm.js",
   "scripts": {
     "build": "rollup -c",
-    "dev": "rollup -c -w",
+    "watch:build": "rollup -c -w",
+    "watch:flow": "nodemon -w src --exec yarn flow -- check",
     "test": "jest --watch"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/rradczewski/expect-redux.git"
   },
-  "keywords": ["jest", "redux", "expect"],
-  "files": ["dist"],
+  "keywords": [
+    "jest",
+    "redux",
+    "expect"
+  ],
+  "files": [
+    "dist"
+  ],
   "author": "Raimo Radczewski <raimoradczewski@googlemail.com>",
   "license": "MIT",
   "bugs": {
@@ -24,7 +31,9 @@
   "devDependencies": {
     "babel-jest": "^21.2.0",
     "babel-preset-env": "^1.6.0",
+    "babel-preset-flow": "^6.23.0",
     "jest": "^21.2.1",
+    "nodemon": "^1.12.1",
     "redux": "^3.6.0",
     "rollup": "^0.50.0",
     "rollup-plugin-babel": "^3.0.2",
@@ -32,6 +41,7 @@
     "rollup-plugin-node-resolve": "^3.0.0"
   },
   "dependencies": {
+    "flow-bin": "^0.56.0",
     "ramda": "^0.24.1"
   }
 }

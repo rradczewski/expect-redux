@@ -1,5 +1,6 @@
 {
   "presets": [
+    "flow",
     [
       "env",
       {
@@ -8,7 +9,7 @@
           "node": "v4.8.4"
         },
         "modules": false
-      }
+      },
     ]
   ],
 

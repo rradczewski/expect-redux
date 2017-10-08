@@ -1,9 +1,11 @@
+// @flow
+import type { Store } from 'redux';
+import type { StoreShape, Action } from './storeSpy';
+
 import { propEq, equals, allPass } from 'ramda';
 
-export default function() {
-  const store = this.actual;
-
-  const expectation = predicate =>
+const matchers = (store: StoreShape<*, *, *>) => {
+  const expectation = (predicate): Promise<void> =>
     new Promise(resolve => {
       const resolver = action => (predicate(action) ? resolve() : undefined);
 
@@ -19,9 +21,9 @@ export default function() {
   const matchingPredicate = pred => expectation(pred);
 
   return {
-    ofType: type =>
-      Object.assign(expectation(propEq('type', type)), {
-        matching: pred =>
+    ofType: (type: string) =>
+      Object.assign((expectation(propEq('type', type)): Object), {
+        matching: (pred: (Action => boolean) | string) =>
           expectation(
             action =>
               typeof pred === 'function'
@@ -29,7 +31,11 @@ export default function() {
                 : allPass([propEq('type', type), equals(pred)])(action)
           )
       }),
-    matching: obj =>
+    matching: (obj: Action => Promise<void> | Object) =>
       typeof obj === 'function' ? matchingPredicate(obj) : matchingObject(obj)
   };
-}
+};
+
+export default (store: StoreShape<*, *, *>) => ({
+  toDispatchAnAction: () => matchers(store)
+});
