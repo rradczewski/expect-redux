@@ -1,10 +1,7 @@
 import { createStore } from 'redux';
 import { storeSpy, expectRedux } from '../src/';
 
-import expect from 'expect';
 import { identity, propEq } from 'ramda';
-
-expect.extend(expectRedux);
 
 describe('Testing actions', () => {
   const testPreviouslyDispatchedAction = (action, fun) =>
@@ -13,7 +10,6 @@ describe('Testing actions', () => {
       store.dispatch(action);
       fun(store, done);
     });
-
 
   const testEventuallyDispatchedAction = (action, fun) =>
     it('works on eventually dispatched actions', done => {
@@ -28,153 +24,136 @@ describe('Testing actions', () => {
   };
 
   describe('ofType', () => {
-    testSyncAndAsync(
-      { type: 'TEST_ACTION' },
-      (store, done) =>
-        expect(store)
-          .toDispatchAnAction()
-          .ofType('TEST_ACTION')
-          .then(done, done)
+    testSyncAndAsync({ type: 'TEST_ACTION' }, (store, done) =>
+      expectRedux(store)
+        .toDispatchAnAction()
+        .ofType('TEST_ACTION')
+        .then(done, done)
     );
 
     describe('does not succeed if it', () => {
-      testSyncAndAsync(
-        { type: 'TEST_ACTION' },
-        (store, done) => {
-          let failed = false;
-          const fail = () => {
-            failed = true;
-            done(new Error('Should not happen'));
-          };
+      testSyncAndAsync({ type: 'TEST_ACTION' }, (store, done) => {
+        let failed = false;
+        const fail = () => {
+          failed = true;
+          done(new Error('Should not happen'));
+        };
 
-          expect(store)
-            .toDispatchAnAction()
-            .ofType('ANOTHER_ACTION')
-            .then(fail, fail);
+        expectRedux(store)
+          .toDispatchAnAction()
+          .ofType('ANOTHER_ACTION')
+          .then(fail, fail);
 
-          // Finish successfully after dispatching the action
-          setTimeout(() => failed ? undefined : done(), 10);
-        }
-      );
+        // Finish successfully after dispatching the action
+        setTimeout(() => (failed ? undefined : done()), 10);
+      });
     });
   });
 
   describe('matching(object)', () => {
-    testSyncAndAsync(
-      { type: 'TEST_ACTION', payload: 1 },
-      (store, done) =>
-        expect(store)
-          .toDispatchAnAction()
-          .matching({ type: 'TEST_ACTION', payload: 1})
-          .then(done, done)
+    testSyncAndAsync({ type: 'TEST_ACTION', payload: 1 }, (store, done) =>
+      expectRedux(store)
+        .toDispatchAnAction()
+        .matching({ type: 'TEST_ACTION', payload: 1 })
+        .then(done, done)
     );
 
     describe('does not succeed if it', () => {
-      testSyncAndAsync(
-        { type: 'TEST_ACTION', payload: 1 },
-        (store, done) => {
-          let failed = false;
-          const fail = () => {
-            failed = true;
-            done(new Error('Should not happen'));
-          };
+      testSyncAndAsync({ type: 'TEST_ACTION', payload: 1 }, (store, done) => {
+        let failed = false;
+        const fail = () => {
+          failed = true;
+          done(new Error('Should not happen'));
+        };
 
-          expect(store)
-            .toDispatchAnAction()
-            .matching({ type: 'TEST_ACTION', payload: 2})
-            .then(fail, fail);
+        expectRedux(store)
+          .toDispatchAnAction()
+          .matching({ type: 'TEST_ACTION', payload: 2 })
+          .then(fail, fail);
 
-          // Finish successfully after dispatching the action
-          setTimeout(() => failed ? undefined : done(), 10);
-        }
-      );
+        // Finish successfully after dispatching the action
+        setTimeout(() => (failed ? undefined : done()), 10);
+      });
     });
-
   });
 
   describe('matching(predicate)', () => {
-    testSyncAndAsync(
-      { type: 'TEST_ACTION', payload: 42 },
-      (store, done) =>
-        expect(store)
-          .toDispatchAnAction()
-          .matching(propEq('payload', 42))
-          .then(done, done)
+    testSyncAndAsync({ type: 'TEST_ACTION', payload: 42 }, (store, done) =>
+      expectRedux(store)
+        .toDispatchAnAction()
+        .matching(propEq('payload', 42))
+        .then(done, done)
     );
 
     describe('does not succeed if it', () => {
-      testSyncAndAsync(
-        { type: 'TEST_ACTION', payload: 42 },
-        (store, done) => {
-          let failed = false;
-          const fail = () => {
-            failed = true;
-            done(new Error('Should not happen'));
-          };
+      testSyncAndAsync({ type: 'TEST_ACTION', payload: 42 }, (store, done) => {
+        let failed = false;
+        const fail = () => {
+          failed = true;
+          done(new Error('Should not happen'));
+        };
 
-          expect(store)
-            .toDispatchAnAction()
-            .matching(propEq('payload', 43))
-            .then(fail, fail);
+        expectRedux(store)
+          .toDispatchAnAction()
+          .matching(propEq('payload', 43))
+          .then(fail, fail);
 
-          // Finish successfully after dispatching the action
-          setTimeout(() => failed ? undefined : done(), 10);
-        }
-      );
+        // Finish successfully after dispatching the action
+        setTimeout(() => (failed ? undefined : done()), 10);
+      });
     });
   });
 
   describe('ofType(type).matching(predicate)', () => {
-    testSyncAndAsync(
-      { type: 'TEST_ACTION', payload: 42 },
-      (store, done) =>
-        expect(store)
-          .toDispatchAnAction()
-          .ofType('TEST_ACTION')
-          .matching(propEq('payload', 42))
-          .then(() => done(), done)
+    testSyncAndAsync({ type: 'TEST_ACTION', payload: 42 }, (store, done) =>
+      expectRedux(store)
+        .toDispatchAnAction()
+        .ofType('TEST_ACTION')
+        .matching(propEq('payload', 42))
+        .then(() => done(), done)
     );
 
-    it('should only match ONE action that satisfies both predicates', (done) => {
+    it('should only match ONE action that satisfies both predicates', done => {
       const store = createStore(identity, {}, storeSpy);
       store.dispatch({ type: 'TEXT_ACTION_1', payload: 1 });
       store.dispatch({ type: 'TEXT_ACTION_2', payload: 2 });
-      
+
       let failed = false;
       const fail = () => {
         failed = true;
-        done(new Error('Predicates individually matched for at least one single action, but not for exactly the same'));
+        done(
+          new Error(
+            'Predicates individually matched for at least one single action, but not for exactly the same'
+          )
+        );
       };
 
-      expect(store)
+      expectRedux(store)
         .toDispatchAnAction()
         .ofType('TEST_ACTION_1')
         .matching(propEq('payload', 2))
         .then(fail);
 
-      setTimeout(() => failed ? undefined : done(), 10);
+      setTimeout(() => (failed ? undefined : done()), 10);
     });
 
     describe('does not succeed if it', () => {
-      testSyncAndAsync(
-        { type: 'TEST_ACTION', payload: 42 },
-        (store, done) => {
-          let failed = false;
-          const fail = () => {
-            failed = true;
-            done(new Error('Should not happen'));
-          };
+      testSyncAndAsync({ type: 'TEST_ACTION', payload: 42 }, (store, done) => {
+        let failed = false;
+        const fail = () => {
+          failed = true;
+          done(new Error('Should not happen'));
+        };
 
-          expect(store)
-            .toDispatchAnAction()
-            .ofType('TEST_ACTION')
-            .matching(propEq('payload', 43))
-            .then(fail, fail);
+        expectRedux(store)
+          .toDispatchAnAction()
+          .ofType('TEST_ACTION')
+          .matching(propEq('payload', 43))
+          .then(fail, fail);
 
-          // Finish successfully after dispatching the action
-          setTimeout(() => failed ? undefined : done(), 10);
-        }
-      );
+        // Finish successfully after dispatching the action
+        setTimeout(() => (failed ? undefined : done()), 10);
+      });
     });
   });
 });

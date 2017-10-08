@@ -1,3 +1,31 @@
 {
-  "presets": [ "es2015" ]
+  "presets": [
+    [
+      "env",
+      {
+        "targets": {
+          "browsers": ["last 2 versions", "safari >= 7"],
+          "node": "v4.8.4"
+        },
+        "modules": false
+      }
+    ]
+  ],
+
+  "env": {
+    "test": {
+      "presets": [
+        [
+          "env",
+          {
+            "targets": {
+              "browsers": ["last 2 versions", "safari >= 7"],
+              "node": "v4.8.4"
+            },
+            "modules": "commonjs"
+          }
+        ]
+      ]
+    }
+  }
 }

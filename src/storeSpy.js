@@ -1,9 +1,9 @@
-
-export default (nextCreateStore) => (reducer, initialState, enhancer) => {
+export default nextCreateStore => (reducer, initialState, enhancer) => {
   const actions = [];
   const expectations = [];
 
-  const checkExpectations = (action) => expectations.forEach(expectation => expectation(action));
+  const checkExpectations = action =>
+    expectations.forEach(expectation => expectation(action));
 
   const recorder = (state, action) => {
     actions.push(action);
