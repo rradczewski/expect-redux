@@ -8,7 +8,7 @@ export default [
       { file: pkg.main, format: 'cjs' },
       { file: pkg.module, format: 'es' }
     ],
-    external: ['ramda'],
+    external: ['ramda', 'sprintf-js'],
     plugins: [
       babel({
         exclude: ['node_modules/**']

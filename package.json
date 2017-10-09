@@ -5,12 +5,13 @@
   "main": "dist/index.js",
   "module": "dist/expect-redux.esm.js",
   "scripts": {
-    "build": "npm-run-all -s build:clean build:js build:flow",
+    "build": "npm-run-all -s test flow build:clean build:js build:flow",
     "build:js": "rollup -c",
     "build:clean": "rimraf dist",
     "build:flow": "flow-copy-source -v src dist",
     "watch:build": "rollup -c -w",
     "watch:flow": "nodemon -w src --exec yarn flow -- check",
+    "flow": "flow",
     "test": "jest"
   },
   "repository": {
@@ -33,6 +34,9 @@
   "homepage": "https://github.com/rradczewski/expect-redux#readme",
   "devDependencies": {
     "babel-jest": "^21.2.0",
+    "babel-plugin-syntax-flow": "^6.18.0",
+    "babel-plugin-transform-class-properties": "^6.24.1",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-preset-env": "^1.6.0",
     "babel-preset-flow": "^6.23.0",
     "flow-copy-source": "^1.2.1",
@@ -48,6 +52,7 @@
   },
   "dependencies": {
     "flow-bin": "^0.56.0",
-    "ramda": "^0.24.1"
+    "ramda": "^0.24.1",
+    "sprintf-js": "^1.1.1"
   }
 }
