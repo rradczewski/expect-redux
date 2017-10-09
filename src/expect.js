@@ -11,6 +11,14 @@ type BetterErrorMessagesOptions = {
   timeout: number
 };
 
+const trySerialize = (o: any): string => {
+  try {
+    return JSON.stringify(o);
+  } catch(e) {
+    return `{ Unserializable Object: ${e} }`;
+  }
+}
+
 class ExpectRedux {
   store: StoreShape<*, *, *>;
 
@@ -28,7 +36,7 @@ class ExpectRedux {
 The following actions got dispatched to the store instead (${this.store.actions
       .length}):
 ${this.store.actions
-      .map(({ type, ...props }) => sprintf(`\t%${longestMessage+3}s:\t%s`, type, JSON.stringify(props)))
+      .map(({ type, ...props }) => sprintf(`\t%${longestMessage+3}s:\t%s`, type, trySerialize(props)))
       .join('\n')}
     `;
   }
@@ -59,7 +67,7 @@ ${this.store.actions
     const matchingObject = obj =>
       this.expectation(
         equals(obj),
-        `an action equal to ${JSON.stringify(obj)}`
+        `an action equal to ${trySerialize(obj)}`
       );
     const matchingPredicate = (pred: Action => boolean) =>
       this.expectation(
@@ -86,7 +94,7 @@ ${this.store.actions
               `an action of type '${type}' matching '${typeof pred ===
               'function'
                 ? pred.toString()
-                : JSON.stringify(pred)}'`
+                : trySerialize(pred)}'`
             );
           }
         });

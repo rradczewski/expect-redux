@@ -13,6 +13,14 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 var betterErrorMessages = false;
 
+var trySerialize = function trySerialize(o) {
+  try {
+    return JSON.stringify(o);
+  } catch (e) {
+    return '{ Unserializable Object: ' + e + ' }';
+  }
+};
+
 var ExpectRedux = function () {
   function ExpectRedux(store) {
     _classCallCheck(this, ExpectRedux);
@@ -32,7 +40,7 @@ var ExpectRedux = function () {
         var type = _ref.type,
             props = _objectWithoutProperties(_ref, ['type']);
 
-        return sprintfJs.sprintf('\t%' + (longestMessage + 3) + 's:\t%s', type, JSON.stringify(props));
+        return sprintfJs.sprintf('\t%' + (longestMessage + 3) + 's:\t%s', type, trySerialize(props));
       }).join('\n') + '\n    ';
     }
   }, {
@@ -66,7 +74,7 @@ var ExpectRedux = function () {
       var _this2 = this;
 
       var matchingObject = function matchingObject(obj) {
-        return _this2.expectation(ramda.equals(obj), 'an action equal to ' + JSON.stringify(obj));
+        return _this2.expectation(ramda.equals(obj), 'an action equal to ' + trySerialize(obj));
       };
       var matchingPredicate = function matchingPredicate(pred) {
         return _this2.expectation(pred, 'an action matching the predicate ' + pred.toString());
@@ -84,7 +92,7 @@ var ExpectRedux = function () {
 
               return _this2.expectation(function (action) {
                 return typeof pred === 'function' ? ramda.allPass([ramda.propEq('type', type), pred])(action) : ramda.allPass([ramda.propEq('type', type), ramda.equals(pred)])(action);
-              }, 'an action of type \'' + type + '\' matching \'' + (typeof pred === 'function' ? pred.toString() : JSON.stringify(pred)) + '\'');
+              }, 'an action of type \'' + type + '\' matching \'' + (typeof pred === 'function' ? pred.toString() : trySerialize(pred)) + '\'');
             }
           });
         },

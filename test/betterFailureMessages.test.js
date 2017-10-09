@@ -29,4 +29,20 @@ describe('better failure messages', () => {
   afterEach(() => {
     expectRedux.enableBetterErrorMessages(false);
   })
+
+  describe('regressions', () => {
+    it('should not fail while serializing circular objects', async () => {
+      const actionA = {type: 'FOO'};
+      actionA.foo = actionA;
+
+      const store = createStore(identity, {}, storeSpy);
+      try {
+        await expectRedux(store).toDispatchAnAction().matching(actionA);
+        fail('No error thrown');
+      } catch(e) {
+        expect(e.message).toContain('Unserializable Object');
+      }
+
+    })
+  })
 });
