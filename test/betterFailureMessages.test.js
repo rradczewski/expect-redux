@@ -23,8 +23,19 @@ describe('better failure messages', () => {
     }
   });
 
-  it('should report the total number of dispatched actions');
-  it('should highlight actions of the same type');
+  it('should report the total number of dispatched actions', async () => {
+    const store = createStore(identity, {}, storeSpy);
+
+    store.dispatch({type: 'foo', value: 'bla'});
+    store.dispatch({type: 'foo', value: 'bla'});
+
+    try {
+      await expectRedux(store).toDispatchAnAction().ofType('bar').matching(foo => foo === true);
+      fail('No error thrown');
+    } catch(e) {
+      expect(e.message).toContain('(3)');
+    }
+  });
 
   afterEach(() => {
     expectRedux.enableBetterErrorMessages(false);
