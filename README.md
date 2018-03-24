@@ -16,6 +16,8 @@ npm install expect-redux
 
 ## Usage
 
+See [`/example`](example/) for an example react app illustrating the purpose of this library.
+
 This library relies on `mocha | jest` waiting for the `Promise` a test returns to eventually resolve.
 Sadly, `mocha` and `jest` neither support custom timeout messages yet, so a failing test will usually just yield a timeout message. There's a workaround for that (see `betterErrorMessages`), requiring you to specify a timeout less than the test timeout specified in your test runner (see [`jest.setTimeout`](https://facebook.github.io/jest/docs/en/jest-object.html#jestsettimeouttimeout), [`jasmine.DEFAULT_TIMEOUT_INTERVAL`](https://jasmine.github.io/api/3.0/jasmine.html) or [`mocha --timeout`](https://mochajs.org/#usage)).
 
