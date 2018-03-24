@@ -93,8 +93,28 @@ var ExpectRedux = function () {
               return _this2.expectation(function (action) {
                 return typeof pred === 'function' ? ramda.allPass([ramda.propEq('type', type), pred])(action) : ramda.allPass([ramda.propEq('type', type), ramda.equals(pred)])(action);
               }, 'an action of type \'' + type + '\' matching \'' + (typeof pred === 'function' ? pred.toString() : trySerialize(pred)) + '\'');
+            },
+            asserting: function asserting(assertion) {
+              return _this2.expectation(ramda.allPass([ramda.propEq('type', type), function (action) {
+                try {
+                  assertion(action);
+                  return true;
+                } catch (e) {
+                  return false;
+                }
+              }]), 'an action of type \'' + type + '\' matching the assertion ' + assertion.toString());
             }
           });
+        },
+        asserting: function asserting(assertion) {
+          return _this2.expectation(function (action) {
+            try {
+              assertion(action);
+              return true;
+            } catch (e) {
+              return false;
+            }
+          }, 'an action matching the assertion ' + assertion.toString());
         },
         matching: function matching(obj) {
           return typeof obj === 'function' ? matchingPredicate(obj) : matchingObject(obj);

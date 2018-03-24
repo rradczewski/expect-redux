@@ -1,5 +1,5 @@
 import { sprintf } from 'sprintf-js';
-import { allPass, equals, propEq } from 'ramda';
+import { propEq, equals, allPass } from 'ramda';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -89,8 +89,28 @@ var ExpectRedux = function () {
               return _this2.expectation(function (action) {
                 return typeof pred === 'function' ? allPass([propEq('type', type), pred])(action) : allPass([propEq('type', type), equals(pred)])(action);
               }, 'an action of type \'' + type + '\' matching \'' + (typeof pred === 'function' ? pred.toString() : trySerialize(pred)) + '\'');
+            },
+            asserting: function asserting(assertion) {
+              return _this2.expectation(allPass([propEq('type', type), function (action) {
+                try {
+                  assertion(action);
+                  return true;
+                } catch (e) {
+                  return false;
+                }
+              }]), 'an action of type \'' + type + '\' matching the assertion ' + assertion.toString());
             }
           });
+        },
+        asserting: function asserting(assertion) {
+          return _this2.expectation(function (action) {
+            try {
+              assertion(action);
+              return true;
+            } catch (e) {
+              return false;
+            }
+          }, 'an action matching the assertion ' + assertion.toString());
         },
         matching: function matching(obj) {
           return typeof obj === 'function' ? matchingPredicate(obj) : matchingObject(obj);
