@@ -83,7 +83,7 @@ ${this.store.actions
         );
 
         return Object.assign(promise, {
-          matching: (pred: (Action => boolean) | string) => {
+          matching: (pred: (Action => boolean) | Object) => {
             promise.catch(() => ({}));
 
             return this.expectation(
