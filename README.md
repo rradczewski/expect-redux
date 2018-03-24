@@ -40,6 +40,10 @@ describe('my action dispatcher', () => {
 
 ## API
 
+### `require('expect-redux').enableBetterErrorMessages({timeout: number} | false)`
+
+Fail if no expectation matched after `timeout` miliseconds. This is a workaround so you get a meaningful error message instead of a timeout error. Can go into the setup file as it's a global switch.
+
 ### `toDispatchAnAction().ofType(type)`
 
 Matches by the passed `type` of an action only
