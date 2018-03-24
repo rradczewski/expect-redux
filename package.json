@@ -12,7 +12,10 @@
     "watch:build": "rollup -c -w",
     "watch:flow": "nodemon -w src --exec yarn flow -- check",
     "flow": "flow",
-    "test": "jest"
+    "test": "jest",
+    "preversion": "npm test",
+    "version": "npm run build && git add -A dist",
+    "postversion": "git push origin && git push origin --tags"
   },
   "repository": {
     "type": "git",
