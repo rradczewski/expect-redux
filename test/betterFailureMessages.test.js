@@ -8,8 +8,6 @@ describe('better failure messages', () => {
     expectRedux.enableBetterErrorMessages({timeout: 1});
   });
 
-  it('should explain which action it was looking for');
-
   it('should report all dispatched actions in a brief format', async () => {
     const store = createStore(identity, {}, storeSpy);
 

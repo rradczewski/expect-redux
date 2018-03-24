@@ -3,27 +3,26 @@ import { storeSpy, expectRedux } from '../src/';
 
 import { identity, propEq } from 'ramda';
 
+const testPreviouslyDispatchedAction = (action, fun) =>
+  it('on previously dispatched actions', done => {
+    const store = createStore(identity, {}, storeSpy);
+    store.dispatch(action);
+    fun(store, done);
+  });
+
+const testEventuallyDispatchedAction = (action, fun) =>
+  it('on eventually dispatched actions', done => {
+    const store = createStore(identity, {}, storeSpy);
+    setTimeout(() => store.dispatch(action));
+    fun(store, done);
+  });
+
+const testSyncAndAsync = (action, fun) => {
+  testPreviouslyDispatchedAction(action, fun);
+  testEventuallyDispatchedAction(action, fun);
+};
 
 describe('Testing actions', () => {
-  const testPreviouslyDispatchedAction = (action, fun) =>
-    it('works on previously dispatched actions', done => {
-      const store = createStore(identity, {}, storeSpy);
-      store.dispatch(action);
-      fun(store, done);
-    });
-
-  const testEventuallyDispatchedAction = (action, fun) =>
-    it('works on eventually dispatched actions', done => {
-      const store = createStore(identity, {}, storeSpy);
-      setTimeout(() => store.dispatch(action));
-      fun(store, done);
-    });
-
-  const testSyncAndAsync = (action, fun) => {
-    testPreviouslyDispatchedAction(action, fun);
-    testEventuallyDispatchedAction(action, fun);
-  };
-
   describe('ofType', () => {
     testSyncAndAsync({ type: 'TEST_ACTION' }, (store, done) =>
       expectRedux(store)
@@ -32,7 +31,7 @@ describe('Testing actions', () => {
         .then(done, done)
     );
 
-    describe('does not succeed if it', () => {
+    describe('does not succeed if no action matches', () => {
       testSyncAndAsync({ type: 'TEST_ACTION' }, (store, done) => {
         let failed = false;
         const fail = () => {
@@ -59,7 +58,7 @@ describe('Testing actions', () => {
         .then(done, done)
     );
 
-    describe('does not succeed if it', () => {
+    describe('does not succeed if no action matches', () => {
       testSyncAndAsync({ type: 'TEST_ACTION', payload: 1 }, (store, done) => {
         let failed = false;
         const fail = () => {
@@ -86,7 +85,7 @@ describe('Testing actions', () => {
         .then(done, done)
     );
 
-    describe('does not succeed if it', () => {
+    describe('does not succeed if no action matches', () => {
       testSyncAndAsync({ type: 'TEST_ACTION', payload: 42 }, (store, done) => {
         let failed = false;
         const fail = () => {
@@ -138,7 +137,7 @@ describe('Testing actions', () => {
       setTimeout(() => (failed ? undefined : done()), 10);
     });
 
-    describe('does not succeed if it', () => {
+    describe('does not succeed if no action matches', () => {
       testSyncAndAsync({ type: 'TEST_ACTION', payload: 42 }, (store, done) => {
         let failed = false;
         const fail = () => {
