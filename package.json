@@ -42,6 +42,7 @@
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-preset-env": "^1.6.0",
     "babel-preset-flow": "^6.23.0",
+    "flow-bin": "^0.56.0",
     "flow-copy-source": "^1.2.1",
     "jest": "^21.2.1",
     "nodemon": "^1.12.1",
@@ -54,7 +55,6 @@
     "rollup-plugin-node-resolve": "^3.0.0"
   },
   "dependencies": {
-    "flow-bin": "^0.56.0",
     "ramda": "^0.24.1",
     "sprintf-js": "^1.1.1"
   }
