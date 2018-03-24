@@ -17,7 +17,7 @@ npm install expect-redux
 ## Usage
 
 This library relies on `mocha | jest` waiting for the `Promise` a test returns to eventually resolve.
-Sadly, `mocha` and `jest` neither support custom timeout messages yet, so a failing test will usually just yield a timeout message.
+Sadly, `mocha` and `jest` neither support custom timeout messages yet, so a failing test will usually just yield a timeout message. There's a workaround for that (see `betterErrorMessages`), requiring you to specify a timeout less than the test timeout specified in your test runner (see [`jest.setTimeout`](https://facebook.github.io/jest/docs/en/jest-object.html#jestsettimeouttimeout), [`jasmine.DEFAULT_TIMEOUT_INTERVAL`](https://jasmine.github.io/api/3.0/jasmine.html) or [`mocha --timeout`](https://mochajs.org/#usage)).
 
 ```node
 import { expectRedux, storeSpy } from 'expect-redux';
@@ -50,11 +50,19 @@ Matches an action equal to the passed `object` (using [`R.equals`](http://ramdaj
 
 ### `toDispatchAnAction().matching(predicate)`
 
-Matches an action that satisfies the given `predicate`. predicate must be a function `action => boolean`, e.g. `R.propEq('payload', 'foobar')`
+Matches an action that satisfies the given `predicate`. predicate must be a function `Action => boolean`, e.g. `R.propEq('payload', 'foobar')`. Will not fail if the `predicate` returns `false`.
+
+### `toDispatchAnAction().asserting(assertion)`
+
+Matches an action that won't let the given `assertion` throw an exception. Assertion must be a function `Action => any`, e.g. `R.propEq('payload', 'foobar')`. Will not fail if the `assertion` throws.
 
 ### `toDispatchAnAction().ofType(type).matching(predicate)`
 
 Matches an action that both is of type `type` and satisfies the given `predicate`. Like above, predicate must be a function `action => boolean`.
+
+### `toDispatchAnAction().ofType(type).asserting(assertion)`
+
+Matches an action that both is of type `type` and does not let the given `assertion` throw. Assertion must be a function `Action => any`, e.g. `R.propEq('payload', 'foobar')`. Will not fail if the `assertion` throws.
 
 
 ## Similar or related libraries

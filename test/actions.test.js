@@ -104,6 +104,33 @@ describe('Testing actions', () => {
     });
   });
 
+  describe('asserting(assertion)', () => {
+    testSyncAndAsync({ type: 'TEST_ACTION', payload: 42 }, (store, done) =>
+      expectRedux(store)
+        .toDispatchAnAction()
+        .asserting(action => expect(action.payload).toEqual(42))
+        .then(done, done)
+    );
+
+    describe('does not succeed if no action matches', () => {
+      testSyncAndAsync({ type: 'TEST_ACTION', payload: 42 }, (store, done) => {
+        let failed = false;
+        const fail = () => {
+          failed = true;
+          done(new Error('Should not happen'));
+        };
+
+        expectRedux(store)
+          .toDispatchAnAction()
+          .asserting(action => expect(action.payload).toEqual(43))
+          .then(fail, fail);
+
+        // Finish successfully after dispatching the action
+        setTimeout(() => (failed ? undefined : done()), 10);
+      });
+    });
+  });
+
   describe('ofType(type).matching(predicate)', () => {
     testSyncAndAsync({ type: 'TEST_ACTION', payload: 42 }, (store, done) =>
       expectRedux(store)
@@ -149,6 +176,59 @@ describe('Testing actions', () => {
           .toDispatchAnAction()
           .ofType('TEST_ACTION')
           .matching(propEq('payload', 43))
+          .then(fail, fail);
+
+        // Finish successfully after dispatching the action
+        setTimeout(() => (failed ? undefined : done()), 10);
+      });
+    });
+  });
+
+  describe('ofType(type).asserting(assertion)', () => {
+    testSyncAndAsync({ type: 'TEST_ACTION', payload: 42 }, (store, done) =>
+      expectRedux(store)
+        .toDispatchAnAction()
+        .ofType('TEST_ACTION')
+        .asserting(action => expect(action.payload).toEqual(42))
+        .then(() => done(), done)
+    );
+
+    it('should only match ONE action that satisfies both predicates', done => {
+      const store = createStore(identity, {}, storeSpy);
+      store.dispatch({ type: 'TEXT_ACTION_1', payload: 1 });
+      store.dispatch({ type: 'TEXT_ACTION_2', payload: 2 });
+
+      let failed = false;
+      const fail = () => {
+        failed = true;
+        done(
+          new Error(
+            'Predicates individually matched for at least one single action, but not for exactly the same'
+          )
+        );
+      };
+
+      expectRedux(store)
+        .toDispatchAnAction()
+        .ofType('TEST_ACTION_1')
+        .asserting(action => expect(action.payload).toEqual(2))
+        .then(fail);
+
+      setTimeout(() => (failed ? undefined : done()), 10);
+    });
+
+    describe('does not succeed if no action matches', () => {
+      testSyncAndAsync({ type: 'TEST_ACTION', payload: 42 }, (store, done) => {
+        let failed = false;
+        const fail = () => {
+          failed = true;
+          done(new Error('Should not happen'));
+        };
+
+        expectRedux(store)
+          .toDispatchAnAction()
+          .ofType('TEST_ACTION')
+          .asserting(action => expect(action.payload).toEqual(43))
           .then(fail, fail);
 
         // Finish successfully after dispatching the action

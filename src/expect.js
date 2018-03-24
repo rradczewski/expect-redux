@@ -14,10 +14,10 @@ type BetterErrorMessagesOptions = {
 const trySerialize = (o: any): string => {
   try {
     return JSON.stringify(o);
-  } catch(e) {
+  } catch (e) {
     return `{ Unserializable Object: ${e} }`;
   }
-}
+};
 
 class ExpectRedux {
   store: StoreShape<*, *, *>;
@@ -27,16 +27,24 @@ class ExpectRedux {
   }
 
   buildErrorMessage(expectationStr: string) {
-    const longestMessage: number = this.store.actions.reduce((last, action) => Math.max(last, action.type.length), 0);
+    const longestMessage: number = this.store.actions.reduce(
+      (last, action) => Math.max(last, action.type.length),
+      0
+    );
 
     const timeout =
       betterErrorMessages !== false ? betterErrorMessages.timeout : '';
-    return `Expected ${expectationStr} to be dispatched to store, but did not happen in ${timeout}ms.
+    return `Expected ${
+      expectationStr
+    } to be dispatched to store, but did not happen in ${timeout}ms.
 
-The following actions got dispatched to the store instead (${this.store.actions
-      .length}):
+The following actions got dispatched to the store instead (${
+      this.store.actions.length
+    }):
 ${this.store.actions
-      .map(({ type, ...props }) => sprintf(`\t%${longestMessage+3}s:\t%s`, type, trySerialize(props)))
+      .map(({ type, ...props }) =>
+        sprintf(`\t%${longestMessage + 3}s:\t%s`, type, trySerialize(props))
+      )
       .join('\n')}
     `;
   }
@@ -65,10 +73,7 @@ ${this.store.actions
 
   toDispatchAnAction() {
     const matchingObject = obj =>
-      this.expectation(
-        equals(obj),
-        `an action equal to ${trySerialize(obj)}`
-      );
+      this.expectation(equals(obj), `an action equal to ${trySerialize(obj)}`);
     const matchingPredicate = (pred: Action => boolean) =>
       this.expectation(
         pred,
@@ -91,14 +96,41 @@ ${this.store.actions
                 typeof pred === 'function'
                   ? allPass([propEq('type', type), pred])(action)
                   : allPass([propEq('type', type), equals(pred)])(action),
-              `an action of type '${type}' matching '${typeof pred ===
-              'function'
-                ? pred.toString()
-                : trySerialize(pred)}'`
+              `an action of type '${type}' matching '${
+                typeof pred === 'function'
+                  ? pred.toString()
+                  : trySerialize(pred)
+              }'`
             );
-          }
+          },
+          asserting: (assertion: Action => any) =>
+            this.expectation(
+              allPass([
+                propEq('type', type),
+                action => {
+                  try {
+                    assertion(action);
+                    return true;
+                  } catch (e) {
+                    return false;
+                  }
+                }
+              ]),
+              `an action of type '${
+                type
+              }' matching the assertion ${assertion.toString()}`
+            )
         });
       },
+      asserting: (assertion: Action => any) =>
+        this.expectation(action => {
+          try {
+            assertion(action);
+            return true;
+          } catch (e) {
+            return false;
+          }
+        }, `an action matching the assertion ${assertion.toString()}`),
       matching: (obj: (Action => boolean) | Object) =>
         typeof obj === 'function' ? matchingPredicate(obj) : matchingObject(obj)
     };
