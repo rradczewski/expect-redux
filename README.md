@@ -42,31 +42,31 @@ describe('my action dispatcher', () => {
 
 ## API
 
-### `require('expect-redux').enableBetterErrorMessages({timeout: number} | false)`
+### `expectRedux.enableBetterErrorMessages({timeout: number} | false)`
 
 Fail if no expectation matched after `timeout` miliseconds. This is a workaround so you get a meaningful error message instead of a timeout error. Can go into the setup file as it's a global switch.
 
-### `toDispatchAnAction().ofType(type)`
+### `expectRedux(store).toDispatchAnAction().ofType(type)`
 
 Matches by the passed `type` of an action only
 
-### `toDispatchAnAction().matching(object)`
+### `expectRedux(store).toDispatchAnAction().matching(object)`
 
 Matches an action equal to the passed `object` (using [`R.equals`](http://ramdajs.com/docs/#equals))
 
-### `toDispatchAnAction().matching(predicate)`
+### `expectRedux(store).toDispatchAnAction().matching(predicate)`
 
 Matches an action that satisfies the given `predicate`. predicate must be a function `Action => boolean`, e.g. `R.propEq('payload', 'foobar')`. Will not fail if the `predicate` returns `false`.
 
-### `toDispatchAnAction().asserting(assertion)`
+### `expectRedux(store).toDispatchAnAction().asserting(assertion)`
 
 Matches an action that won't let the given `assertion` throw an exception. Assertion must be a function `Action => any`, e.g. `R.propEq('payload', 'foobar')`. Will not fail if the `assertion` throws.
 
-### `toDispatchAnAction().ofType(type).matching(predicate)`
+### `expectRedux(store).toDispatchAnAction().ofType(type).matching(predicate)`
 
 Matches an action that both is of type `type` and satisfies the given `predicate`. Like above, predicate must be a function `action => boolean`.
 
-### `toDispatchAnAction().ofType(type).asserting(assertion)`
+### `expectRedux(store).toDispatchAnAction().ofType(type).asserting(assertion)`
 
 Matches an action that both is of type `type` and does not let the given `assertion` throw. Assertion must be a function `Action => any`, e.g. `R.propEq('payload', 'foobar')`. Will not fail if the `assertion` throws.
 
