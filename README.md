@@ -60,7 +60,7 @@ Matches an action that satisfies the given `predicate`. predicate must be a func
 
 ### `expectRedux(store).toDispatchAnAction().asserting(assertion)`
 
-Matches an action that won't let the given `assertion` throw an exception. Assertion must be a function `Action => any`, e.g. `R.propEq('payload', 'foobar')`. Will not fail if the `assertion` throws.
+Matches an action that won't let the given `assertion` throw an exception. Assertion must be a function `Action => any`, e.g. `action => expect(action.payload).toEqual(42)`. Will not fail if the `assertion` throws.
 
 ### `expectRedux(store).toDispatchAnAction().ofType(type).matching(predicate)`
 
@@ -68,7 +68,7 @@ Matches an action that both is of type `type` and satisfies the given `predicate
 
 ### `expectRedux(store).toDispatchAnAction().ofType(type).asserting(assertion)`
 
-Matches an action that both is of type `type` and does not let the given `assertion` throw. Assertion must be a function `Action => any`, e.g. `R.propEq('payload', 'foobar')`. Will not fail if the `assertion` throws.
+Matches an action that both is of type `type` and does not let the given `assertion` throw. Assertion must be a function `Action => any`, e.g. `action => expect(action.payload).toEqual(42)`. Will not fail if the `assertion` throws.
 
 
 ## Similar or related libraries
