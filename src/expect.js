@@ -3,7 +3,7 @@ import type { Store } from 'redux';
 import type { StoreShape, Action } from './storeSpy';
 
 import { sprintf } from 'sprintf-js';
-import { propEq, equals, allPass } from 'ramda';
+import { propEq, equals, anyPass, allPass, complement } from 'ramda';
 
 let betterErrorMessages: false | BetterErrorMessagesOptions = false;
 
@@ -131,6 +131,71 @@ ${this.store.actions
             return false;
           }
         }, `an action matching the assertion ${assertion.toString()}`),
+      matching: (obj: (Action => boolean) | Object) =>
+        typeof obj === 'function' ? matchingPredicate(obj) : matchingObject(obj)
+    };
+  }
+
+  toNotDispatchAnAction() {
+    const matchingObject = obj =>
+      this.expectation(complement(equals(obj)), `no action equal to ${trySerialize(obj)}`);
+    const matchingPredicate = (pred: Action => boolean) =>
+      this.expectation(
+        complement(pred),
+        `no action matching the predicate ${pred.toString()}`
+      );
+
+    return {
+      ofType: (type: string) => {
+        const promise: Promise<void> & Object = this.expectation(
+          complement(propEq('type', type)),
+          `no action of type '${type}'`
+        );
+
+        return Object.assign(promise, {
+          matching: (pred: (Action => boolean) | Object) => {
+            promise.catch(() => ({}));
+
+            return this.expectation(
+              action =>
+                typeof pred === 'function'
+                  ? complement(anyPass([propEq('type', type), pred]))(action)
+                  : complement(anyPass([propEq('type', type), equals(pred)]))(action),
+              `no action of type '${type}' matching '${
+                typeof pred === 'function'
+                  ? pred.toString()
+                  : trySerialize(pred)
+              }'`
+            );
+          },
+          asserting: (assertion: Action => any) =>
+            this.expectation(
+              complement(anyPass([
+                propEq('type', type),
+                action => {
+                  try {
+                    assertion(action);
+                    return true;
+                  } catch (e) {
+                    return false;
+                  }
+                }
+              ])),
+              `no action of type '${
+                type
+              }' matching the assertion ${assertion.toString()}`
+            )
+        });
+      },
+      asserting: (assertion: Action => any) =>
+        this.expectation(action => {
+          try {
+            assertion(action);
+            return false;
+          } catch (e) {
+            return true;
+          }
+        }, `no action matching the assertion ${assertion.toString()}`),
       matching: (obj: (Action => boolean) | Object) =>
         typeof obj === 'function' ? matchingPredicate(obj) : matchingObject(obj)
     };
