@@ -70,6 +70,8 @@ Matches an action that both is of type `type` and satisfies the given `predicate
 
 Matches an action that both is of type `type` and does not let the given `assertion` throw. Assertion must be a function `Action => any`, e.g. `action => expect(action.payload).toEqual(42)`. Will not fail if the `assertion` throws.
 
+All of these are also available in the negated form `toNotDispatchAnAction()`.
+
 
 ## Similar or related libraries
 

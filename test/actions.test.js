@@ -48,6 +48,33 @@ describe('Testing actions', () => {
         setTimeout(() => (failed ? undefined : done()), 10);
       });
     });
+
+    xdescribe('does not succeed in negation if an action matches', () => {
+      testSyncAndAsync({ type: 'TEST_ACTION' }, (store, done) => {
+        let failed = false;
+        const fail = () => {
+          failed = true;
+          done(new Error('Should not happen'));
+        };
+
+        expectRedux(store)
+          .toNotDispatchAnAction()
+          .ofType('TEST_ACTION')
+          .then(fail, fail);
+
+        // Finish successfully after dispatching the action
+        setTimeout(() => (failed ? undefined : done()), 10);
+      });
+    });
+
+    describe('does succeed in negation if no action matches', () => {
+      testSyncAndAsync({ type: 'TEST_ACTION' }, (store, done) => {
+        expectRedux(store)
+        .toNotDispatchAnAction()
+        .ofType('ANOTHER_ACTION')
+        .then(done, done);
+      });
+    });
   });
 
   describe('matching(object)', () => {
@@ -73,6 +100,33 @@ describe('Testing actions', () => {
 
         // Finish successfully after dispatching the action
         setTimeout(() => (failed ? undefined : done()), 10);
+      });
+    });
+
+    xdescribe('does not succeed in negation if an action matches', () => {
+      testSyncAndAsync({ type: 'TEST_ACTION', payload: 1 }, (store, done) => {
+        let failed = false;
+        const fail = () => {
+          failed = true;
+          done(new Error('Should not happen'));
+        };
+
+        expectRedux(store)
+          .toNotDispatchAnAction()
+          .matching({ type: 'TEST_ACTION', payload: 1 })
+          .then(fail, fail);
+
+        // Finish successfully after dispatching the action
+        setTimeout(() => (failed ? undefined : done()), 10);
+      });
+    });
+
+    describe('does succeed in negation if no action matches', () => {
+      testSyncAndAsync(({ type: 'TEST_ACTION', payload: 1 }), (store, done) => {
+        expectRedux(store)
+        .toNotDispatchAnAction()
+        .matching({ type: 'TEST_ACTION', payload: 2})
+        .then(done, done);
       });
     });
   });
@@ -102,6 +156,33 @@ describe('Testing actions', () => {
         setTimeout(() => (failed ? undefined : done()), 10);
       });
     });
+
+    xdescribe('does not succeed in ngeation if an action matches', () => {
+      testSyncAndAsync({ type: 'TEST_ACTION', payload: 42 }, (store, done) => {
+        let failed = false;
+        const fail = () => {
+          failed = true;
+          done(new Error('Should not happen'));
+        };
+
+        expectRedux(store)
+          .toNotDispatchAnAction()
+          .matching(propEq('payload', 42))
+          .then(fail, fail);
+
+        // Finish successfully after dispatching the action
+        setTimeout(() => (failed ? undefined : done()), 10);
+      });
+    });
+
+    describe('does succeed in negation if no action matches', () => {
+      testSyncAndAsync({ type: 'TEST_ACTION', payload: 42 }, (store, done) => {
+        expectRedux(store)
+        .toNotDispatchAnAction()
+        .matching(propEq('payload', 43))
+        .then(done, done);
+      });
+    });
   });
 
   describe('asserting(assertion)', () => {
@@ -127,6 +208,33 @@ describe('Testing actions', () => {
 
         // Finish successfully after dispatching the action
         setTimeout(() => (failed ? undefined : done()), 10);
+      });
+    });
+
+    xdescribe('does not succeed in negation if an action matches', () => {
+      testSyncAndAsync({ type: 'TEST_ACTION', payload: 43 }, (store, done) => {
+        let failed = false;
+        const fail = () => {
+          failed = true;
+          done(new Error('Should not happen'));
+        };
+
+        expectRedux(store)
+          .toNotDispatchAnAction()
+          .asserting(action => expect(action.payload).toEqual(43))
+          .then(fail, fail);
+
+        // Finish successfully after dispatching the action
+        setTimeout(() => (failed ? undefined : done()), 10);
+      });
+    });
+
+    describe('does succeed in negation if no action matches', () => {
+      testSyncAndAsync({ type: 'TEST_ACTION', payload: 42 }, (store, done) => {
+        expectRedux(store)
+        .toNotDispatchAnAction()
+        .asserting(action => expect(action.payload).toEqual(43))
+        .then(done, done);
       });
     });
   });
@@ -182,6 +290,35 @@ describe('Testing actions', () => {
         setTimeout(() => (failed ? undefined : done()), 10);
       });
     });
+
+    xdescribe('does not succeed in negation if an action matches', () => {
+      testSyncAndAsync({ type: 'TEST_ACTION', payload: 42 }, (store, done) => {
+        let failed = false;
+        const fail = () => {
+          failed = true;
+          done(new Error('Should not happen'));
+        };
+
+        expectRedux(store)
+          .toNotDispatchAnAction()
+          .ofType('TEST_ACTION')
+          .matching(propEq('payload', 42))
+          .then(fail, fail);
+
+        // Finish successfully after dispatching the action
+        setTimeout(() => (failed ? undefined : done()), 10);
+      });
+    });
+
+    describe('does succeed in negation if no action matches', () => {
+      testSyncAndAsync({ type: 'TEST_ACTION', payload: 42 }, (store, done) => {
+        expectRedux(store)
+        .toNotDispatchAnAction()
+        .ofType('TEST_ACTION')
+        .matching(propEq('payload', 43))
+        .then(() => done(), done);
+      });
+    });
   });
 
   describe('ofType(type).asserting(assertion)', () => {
@@ -233,6 +370,35 @@ describe('Testing actions', () => {
 
         // Finish successfully after dispatching the action
         setTimeout(() => (failed ? undefined : done()), 10);
+      });
+    });
+
+    xdescribe('does not succeed in ngeation if an action matches', () => {
+      testSyncAndAsync({ type: 'TEST_ACTION', payload: 42 }, (store, done) => {
+        let failed = false;
+        const fail = () => {
+          failed = true;
+          done(new Error('Should not happen'));
+        };
+
+        expectRedux(store)
+          .toNotDispatchAnAction()
+          .ofType('TEST_ACTION')
+          .asserting(action => expect(action.payload).toEqual(42))
+          .then(fail, fail);
+
+        // Finish successfully after dispatching the action
+        setTimeout(() => (failed ? undefined : done()), 10);
+      });
+    });
+
+    describe('does succeed in negation if no action matches', () => {
+      testSyncAndAsync(({ type: 'TEST_ACTION', payload: 42 }), (store, done) => {
+        expectRedux(store)
+        .toNotDispatchAnAction()
+        .ofType('TEST_ACTION')
+        .asserting(action => expect(action.payload).toEqual(43))
+        .then(() => done(), done)
       });
     });
   });
