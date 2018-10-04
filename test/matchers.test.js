@@ -7,26 +7,26 @@ import {
 import { assertPromiseDidNotResolve } from "./_assertPromiseDidNotResolve";
 
 const dummyStore = {
-  [registerMatcherSymbol]: () => undefined,
-  [unregisterMatcherSymbol]: () => undefined
+  registerMatcher: () => undefined,
+  unregisterMatcher: () => undefined
 };
 
 describe("ofType", () => {
   it("should resolve if action has the asserted type", () => {
     const promise = MatcherPromise.empty(dummyStore).ofType("WANTED_TYPE");
-    promise[testSymbol]({ type: "WANTED_TYPE" });
+    promise.test({ type: "WANTED_TYPE" });
     return promise;
   });
 
   it("should not resolve if the test doesn't pass", () => {
     const promise = MatcherPromise.empty(dummyStore).ofType("WANTED_TYPE");
-    promise[testSymbol]({ type: "GIVEN_TYPE" });
+    promise.test({ type: "GIVEN_TYPE" });
     return assertPromiseDidNotResolve(promise);
   });
 
   it("should provide a meaningful error message", () => {
     const promise = MatcherPromise.empty(dummyStore).ofType("WOOP");
-    expect(promise[errorMessageSymbol]).toEqual(`of type 'WOOP'`);
+    expect(promise.errorMessage).toEqual(`of type 'WOOP'`);
   });
 });
 
@@ -37,7 +37,7 @@ describe("matching", () => {
         attrA: "FOO",
         attrB: "BAR"
       });
-      promise[testSymbol]({ attrA: "FOO", attrB: "BAR" });
+      promise.test({ attrA: "FOO", attrB: "BAR" });
       return promise;
     });
 
@@ -46,7 +46,7 @@ describe("matching", () => {
         attrA: "FOO",
         attrB: "BAR"
       });
-      promise[testSymbol]({ attrA: "SOMETHING ELSE", attrB: "BAR" });
+      promise.test({ attrA: "SOMETHING ELSE", attrB: "BAR" });
       return assertPromiseDidNotResolve(promise);
     });
 
@@ -56,7 +56,7 @@ describe("matching", () => {
         attrB: "BAR"
       };
       const promise = MatcherPromise.empty(dummyStore).matching(obj);
-      expect(promise[errorMessageSymbol]).toEqual(
+      expect(promise.errorMessage).toEqual(
         `equal to ${JSON.stringify(obj)}`
       );
     });
@@ -67,7 +67,7 @@ describe("matching", () => {
       const promise = MatcherPromise.empty(dummyStore).matching(
         propEq("attrA", "FOO")
       );
-      promise[testSymbol]({ attrA: "FOO" });
+      promise.test({ attrA: "FOO" });
       return promise;
     });
 
@@ -75,14 +75,14 @@ describe("matching", () => {
       const promise = MatcherPromise.empty(dummyStore).matching({
         attrA: "FOO"
       });
-      promise[testSymbol](propEq("attrA", "SOMETHING ELSE"));
+      promise.test(propEq("attrA", "SOMETHING ELSE"));
       return assertPromiseDidNotResolve(promise);
     });
 
     it("should provide a meaningful error message", () => {
       const predicate = () => true;
       const promise = MatcherPromise.empty(dummyStore).matching(predicate);
-      expect(promise[errorMessageSymbol]).toEqual(
+      expect(promise.errorMessage).toEqual(
         `passing predicate '${predicate.toString()}'`
       );
     });
@@ -93,7 +93,7 @@ describe("matching", () => {
       const promise = MatcherPromise.empty(dummyStore).asserting(({ attrA }) =>
         expect(attrA).toEqual("FOO")
       );
-      promise[testSymbol]({ attrA: "FOO" });
+      promise.test({ attrA: "FOO" });
       return promise;
     });
 
@@ -101,14 +101,14 @@ describe("matching", () => {
       const promise = MatcherPromise.empty(dummyStore).asserting(({ attrA }) =>
         expect(attrA).toEqual("FOO")
       );
-      promise[testSymbol](propEq("attrA", "SOMETHING ELSE"));
+      promise.test(propEq("attrA", "SOMETHING ELSE"));
       return assertPromiseDidNotResolve(promise);
     });
 
     it("should provide a meaningful error message", () => {
       const assertion = () => expect(true).toBe(false);
       const promise = MatcherPromise.empty(dummyStore).asserting(assertion);
-      expect(promise[errorMessageSymbol]).toEqual(
+      expect(promise.errorMessage).toEqual(
         `passing assertion '${assertion.toString()}'`
       );
     });

@@ -1,21 +1,15 @@
 // @flow
 import { propEq, equals, allPass } from "ramda";
-import {
-  registerMatcherSymbol,
-  unregisterMatcherSymbol,
-  actionsSymbol
-} from "./storeSpy";
 import { trySerialize } from "./_trySerialize";
-
-export const testSymbol = Symbol.for("expectredux_test");
-export const errorMessageSymbol = Symbol.for("expectredux_errorMessage");
-export const failSymbol = Symbol.for("expectredux_fail");
-const resolveSymbol = Symbol.for("expectredux_resolve");
-const rejectSymbol = Symbol.for("expectredux_reject");
-const predicateSymbol = Symbol.for("expectredux_predicate");
-const storeSymbol = Symbol.for("expectredux_store");
+import { sprintf } from "sprintf-js";
 
 class MatcherPromise extends Promise<*> {
+  store: any;
+  resolve: Function;
+  reject: Function;
+  errorMessage: string;
+  predicate: any => boolean;
+
   static empty: (store: any) => MatcherPromise;
 
   static create(
@@ -23,24 +17,22 @@ class MatcherPromise extends Promise<*> {
     errorMessage: string,
     store: any
   ): MatcherPromise {
-    let resolve, reject;
+
+    let resolve: Function, reject: Function;
     const promise = new MatcherPromise((_resolve, _reject) => {
       resolve = _resolve;
       reject = _reject;
     });
+    promise.store = store;
 
     // $FlowFixMe
-    promise[storeSymbol] = store;
+    promise.resolve = resolve;
     // $FlowFixMe
-    promise[resolveSymbol] = resolve;
-    // $FlowFixMe
-    promise[rejectSymbol] = reject;
-    // $FlowFixMe
-    promise[errorMessageSymbol] = errorMessage;
-    // $FlowFixMe
-    promise[predicateSymbol] = predicate;
-    // $FlowFixMe
-    store[registerMatcherSymbol](promise);
+    promise.reject = reject;
+    promise.errorMessage = errorMessage;
+    promise.predicate = predicate;
+
+    store.registerMatcher(promise);
     return promise;
   }
 
@@ -48,25 +40,23 @@ class MatcherPromise extends Promise<*> {
     super(fun);
   }
 
-  // $FlowFixMe
-  [testSymbol](action): void {
-    if (this[predicateSymbol](action)) {
-      this[storeSymbol][unregisterMatcherSymbol](this);
-      this[resolveSymbol]();
+  test(action: any): void {
+    if (this.predicate(action)) {
+      this.store.unregisterMatcher(this);
+      this.resolve();
     }
   }
 
-  // $FlowFixMe
-  [failSymbol](timeout): void {
-    const actions = this[storeSymbol][actionsSymbol];
+  fail(timeout: number): void {
+    const actions = this.store.actions;
     const longestMessage: number = actions.reduce(
       (last, action) => Math.max(last, action.type.length),
       0
     );
 
-    this[rejectSymbol](
+    this.reject(
       new Error(`Expected ${
-        this[errorMessageSymbol]
+        this.errorMessage
       } to be dispatched to store, but did not happen in ${timeout}ms.
 
   The following actions got dispatched to the store instead (${actions.length}):
@@ -80,18 +70,13 @@ class MatcherPromise extends Promise<*> {
   }
 
   and(matcherPromise: MatcherPromise): MatcherPromise {
-    // $FlowFixMe
-    this[storeSymbol][unregisterMatcherSymbol](this);
-    // $FlowFixMe
-    this[storeSymbol][unregisterMatcherSymbol](matcherPromise);
+    this.store.unregisterMatcher(this);
+    this.store.unregisterMatcher(matcherPromise);
 
     return MatcherPromise.create(
-      // $FlowFixMe
-      allPass([this[predicateSymbol], matcherPromise[predicateSymbol]]),
-      // $FlowFixMe
-      `${this[errorMessageSymbol]} and ${matcherPromise[errorMessageSymbol]}`,
-      // $FlowFixMe
-      this[storeSymbol]
+      allPass([this.predicate, matcherPromise.predicate]),
+      `${this.errorMessage} and ${matcherPromise.errorMessage}`,
+      this.store
     );
   }
 
@@ -100,20 +85,18 @@ class MatcherPromise extends Promise<*> {
       MatcherPromise.create(
         propEq("type", type),
         `of type '${type}'`,
-        // $FlowFixMe
-        this[storeSymbol]
+        this.store
       )
     );
   }
 
-  matching(objectOrPredicate: Object | (any => boolean)) {
+  matching(objectOrPredicate: Object | (any => boolean)): MatcherPromise {
     if (typeof objectOrPredicate === "function") {
       return this.and(
         MatcherPromise.create(
           objectOrPredicate,
           `passing predicate '${objectOrPredicate.toString()}'`,
-          // $FlowFixMe
-          this[storeSymbol]
+          this.store
         )
       );
     } else {
@@ -121,14 +104,13 @@ class MatcherPromise extends Promise<*> {
         MatcherPromise.create(
           equals(objectOrPredicate),
           `equal to ${trySerialize(objectOrPredicate)}`,
-          // $FlowFixMe
-          this[storeSymbol]
+          this.store
         )
       );
     }
   }
 
-  asserting(assertion: any => any) {
+  asserting(assertion: any => any): MatcherPromise {
     return this.and(
       MatcherPromise.create(
         action => {
@@ -140,8 +122,7 @@ class MatcherPromise extends Promise<*> {
           }
         },
         `passing assertion '${assertion.toString()}'`,
-        // $FlowFixMe
-        this[storeSymbol]
+        this.store
       )
     );
   }
@@ -150,10 +131,10 @@ class MatcherPromise extends Promise<*> {
 class EmptyMatcherPromise extends MatcherPromise {
   static create(store) {
     const promise = MatcherPromise.create(() => true, "", store);
+
     // $FlowFixMe
     promise.and = function(matcher) {
-      // $FlowFixMe
-      store[unregisterMatcherSymbol](this);
+      store.unregisterMatcher(this);
       return matcher;
     };
     return promise;

@@ -1,11 +1,8 @@
 // @flow
 import type { Store } from "redux";
-import { timeoutSymbol } from "./storeSpy";
+import { propEq, equals, allPass } from "ramda";
 
 import { MatcherPromise } from "./matcher";
-
-import { sprintf } from "sprintf-js";
-import { propEq, equals, allPass } from "ramda";
 
 type BetterErrorMessagesOptions = {
   timeout: number
@@ -14,11 +11,11 @@ type BetterErrorMessagesOptions = {
 let betterErrorMessages: boolean | BetterErrorMessagesOptions = false;
 
 const expectRedux = (
-  store: Store<*, *, *>
+  store: Store<*, *, *> & { timeout: number => mixed }
 ): { toDispatchAnAction: () => MatcherPromise } => {
   if (betterErrorMessages !== false) {
     const timeout: number = (betterErrorMessages: any).timeout;
-    setTimeout(() => store[timeoutSymbol](timeout), timeout);
+    setTimeout(() => store.timeout(timeout), timeout);
   }
   return {
     toDispatchAnAction: (): MatcherPromise => MatcherPromise.empty(store)
