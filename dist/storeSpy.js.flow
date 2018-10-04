@@ -1,35 +1,43 @@
-// @flow
-import type { StoreEnhancer, Store } from 'redux';
+import { MatcherPromise } from "./matcher";
+import { testSymbol, failSymbol } from "./matcher";
 
-export type Action = { type: $Subtype<string> };
-export type StoreShape<S, A, D> = Store<S, A, D> & {
-  actions: Array<Action>,
-  expectations: Array<(Action) => void>
-};
+export const registerMatcherSymbol = Symbol.for(
+  "expectredux_registerMatcherSymbol"
+);
+export const unregisterMatcherSymbol = Symbol.for(
+  "expectredux_unregisterMatcherSymbol"
+);
+export const timeoutSymbol = Symbol.for("expectredux_timeoutSymbol");
+export const actionsSymbol = Symbol.for("expectredux_actionsSymbol");
 
-const storeEnhancer: StoreEnhancer<*, *, *> = nextCreateStore => (
-  reducer,
-  initialState,
-  enhancer
-) => {
-  const actions: Array<Action> = [];
-  const expectations: Array<(Action) => void> = [];
-
-  const checkExpectations = (action: Action): void =>
-    expectations.forEach(expectation => expectation(action));
+const storeEnhancer = nextCreateStore => (reducer, initialState, enhancer) => {
+  const actions = [];
+  const matchers = new Set();
 
   const recorder = (state, action) => {
     actions.push(action);
-    checkExpectations(action);
+    matchers.forEach(matcher => matcher[testSymbol](action));
     return reducer(state, action);
   };
 
   const store = nextCreateStore(recorder, initialState, enhancer);
+  const timeout = timeoutMs =>
+    matchers.forEach(matcher => matcher[failSymbol](timeoutMs));
 
-  return (Object.assign({}, store, {
-    actions,
-    expectations
-  }): StoreShape<*, *, *>);
+  const registerMatcher = matcher => {
+    actions.forEach(action => matcher[testSymbol](action));
+    matchers.add(matcher);
+  };
+  const unregisterMatcher = matcher => {
+    matchers.delete(matcher);
+  };
+
+  return Object.assign({}, store, {
+    [actionsSymbol]: actions,
+    [timeoutSymbol]: timeout,
+    [registerMatcherSymbol]: registerMatcher,
+    [unregisterMatcherSymbol]: unregisterMatcher
+  });
 };
 
 export default storeEnhancer;
