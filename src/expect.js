@@ -24,11 +24,15 @@ type BetterErrorMessagesOptions = {
 /* Deprecated, use expectRedux.configure */
 expectRedux.enableBetterErrorMessages = (
   options: boolean | BetterErrorMessagesOptions
-) =>
+) => {
+  console.warn(
+    "expectRedux.enableBetterErrorMessages is deprecated. Replace with `expectRedux.configure({ betterErrorMessagesTimeout: 100 })`"
+  );
   expectRedux.configure({
     betterErrorMessagesTimeout:
       typeof options.timeout === "number" ? options.timeout : false
   });
+};
 
 type Options = {
   betterErrorMessagesTimeout: number | false

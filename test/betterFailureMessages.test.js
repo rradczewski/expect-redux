@@ -4,7 +4,7 @@ import { identity } from "ramda";
 
 describe("better failure messages", () => {
   beforeEach(() => {
-    expectRedux.enableBetterErrorMessages({ timeout: 1 });
+    expectRedux.configure({ betterErrorMessagesTimeout: 1 });
   });
 
   it("should report all dispatched actions in a brief format", async () => {
@@ -41,7 +41,7 @@ describe("better failure messages", () => {
   });
 
   afterEach(() => {
-    expectRedux.enableBetterErrorMessages(false);
+    expectRedux.configure({ betterErrorMessagesTimeout: false });
   });
 
   describe("regressions", () => {
