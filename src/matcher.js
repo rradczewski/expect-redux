@@ -23,9 +23,9 @@ class MatcherPromise implements PromiseLike {
   errorMessage: string;
   predicate: any => boolean;
 
-  static empty(store: StoreWithSpy<*, *, *>) {
-    return new EmptyMatcherPromise(store);
-  }
+  static empty: (...args: any) => MatcherPromise = (
+    store: StoreWithSpy<*, *, *>
+  ) => new EmptyMatcherPromise(store);
 
   constructor(
     predicate: any => boolean,
@@ -67,7 +67,7 @@ class MatcherPromise implements PromiseLike {
 
 The following actions got dispatched to the store instead (${actions.length}):
 
-${sprintf(`\t%${longestMessage + 3}s\t%s`, 'TYPE', 'PROPS')}
+${sprintf(`\t%${longestMessage + 3}s\t%s`, "TYPE", "PROPS")}
 ${actions.map(printAction).join("\n")}\n`;
 
     this.reject(new Error(message));
@@ -94,11 +94,7 @@ ${actions.map(printAction).join("\n")}\n`;
 
   ofType(type: string) {
     return this.and(
-      new MatcherPromise(
-        propEq("type", type),
-        `of type '${type}'`,
-        this.store
-      )
+      new MatcherPromise(propEq("type", type), `of type '${type}'`, this.store)
     );
   }
 
@@ -151,4 +147,68 @@ class EmptyMatcherPromise extends MatcherPromise {
   }
 }
 
-export { MatcherPromise };
+class NotMatcherPromise extends MatcherPromise {
+  static empty: (...args: any) => MatcherPromise = (
+    store: StoreWithSpy<*, *, *>,
+    timeout: number
+  ): NotMatcherPromise => new EmptyNotMatcherPromise(store, timeout);
+
+  timeout: number;
+
+  constructor(
+    predicate: any => boolean,
+    errorMessage: string,
+    store: StoreWithSpy<*, *, *>,
+    timeout: number
+  ) {
+    super(predicate, errorMessage, store);
+    this.timeout = timeout;
+
+    setTimeout(() => {
+      this.store.unregisterMatcher(this);
+      return this.resolve();
+    }, timeout);
+  }
+
+  test(action: any): void {
+    if (this.predicate(action)) {
+      this.store.unregisterMatcher(this);
+      this.fail(this.timeout);
+    }
+  }
+
+  and(matcherPromise: MatcherPromise): NotMatcherPromise {
+    this.catch(() => undefined);
+    this.store.unregisterMatcher(this);
+    
+    matcherPromise.catch(() => undefined);
+    this.store.unregisterMatcher(matcherPromise);
+
+    return new NotMatcherPromise(
+      allPass([this.predicate, matcherPromise.predicate]),
+      `${this.errorMessage} and ${matcherPromise.errorMessage}`,
+      this.store,
+      this.timeout
+    );
+  }
+}
+
+class EmptyNotMatcherPromise extends NotMatcherPromise {
+  constructor(store: StoreWithSpy<*, *, *>, timeout: number) {
+    super(() => false, "", store, timeout);
+  }
+
+  and(matcher: MatcherPromise): NotMatcherPromise {
+    this.store.unregisterMatcher(this);
+    this.store.unregisterMatcher(matcher);
+
+    return new NotMatcherPromise(
+      matcher.predicate,
+      matcher.errorMessage,
+      matcher.store,
+      this.timeout
+    );
+  }
+}
+
+export { MatcherPromise, NotMatcherPromise };

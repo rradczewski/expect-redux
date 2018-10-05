@@ -2,18 +2,20 @@
 import type { StoreWithSpy } from "./storeSpy";
 import { propEq, equals, allPass } from "ramda";
 
-import { MatcherPromise } from "./matcher";
+import { MatcherPromise, NotMatcherPromise } from "./matcher";
 
 const expectRedux = (
   store: StoreWithSpy<*, *, *> & { timeout: number => mixed }
-): { toDispatchAnAction: () => MatcherPromise } => {
+) => {
   if (expectRedux.options.betterErrorMessagesTimeout !== false) {
     const timeout: number = expectRedux.options.betterErrorMessagesTimeout;
     setTimeout(() => store.timeout(timeout), timeout);
   }
 
   return {
-    toDispatchAnAction: (): MatcherPromise => MatcherPromise.empty(store)
+    toDispatchAnAction: (): MatcherPromise => MatcherPromise.empty(store),
+    toNotDispatchAnAction: (timeout: number): MatcherPromise =>
+      NotMatcherPromise.empty(store, timeout)
   };
 };
 

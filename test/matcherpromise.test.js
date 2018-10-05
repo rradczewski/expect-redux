@@ -23,7 +23,7 @@ describe("MatcherPromise", () => {
     expect(store.unregisterMatcher).toHaveBeenCalledWith(matcher);
   });
 
-  describe("create", () => {
+  describe("constructor", () => {
     it("should register the matcher with the store", () => {
       const store = { registerMatcher: jest.fn() };
       const matcher = new MatcherPromise(action => true, "woop", store);
