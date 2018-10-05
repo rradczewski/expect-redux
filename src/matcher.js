@@ -27,14 +27,6 @@ class MatcherPromise implements PromiseLike {
     return new EmptyMatcherPromise(store);
   }
 
-  static create(
-    predicate: any => boolean,
-    errorMessage: string,
-    store: StoreWithSpy<*, *, *>
-  ): MatcherPromise {
-    return new MatcherPromise(predicate, errorMessage, store);
-  }
-
   constructor(
     predicate: any => boolean,
     errorMessage: string,
@@ -93,7 +85,7 @@ ${actions.map(printAction).join("\n")}\n`;
     this.store.unregisterMatcher(this);
     this.store.unregisterMatcher(matcherPromise);
 
-    return MatcherPromise.create(
+    return new MatcherPromise(
       allPass([this.predicate, matcherPromise.predicate]),
       `${this.errorMessage} and ${matcherPromise.errorMessage}`,
       this.store
@@ -102,7 +94,7 @@ ${actions.map(printAction).join("\n")}\n`;
 
   ofType(type: string) {
     return this.and(
-      MatcherPromise.create(
+      new MatcherPromise(
         propEq("type", type),
         `of type '${type}'`,
         this.store
@@ -113,7 +105,7 @@ ${actions.map(printAction).join("\n")}\n`;
   matching(objectOrPredicate: Object | (any => boolean)): MatcherPromise {
     if (typeof objectOrPredicate === "function") {
       return this.and(
-        MatcherPromise.create(
+        new MatcherPromise(
           objectOrPredicate,
           `passing predicate '${objectOrPredicate.toString()}'`,
           this.store
@@ -121,7 +113,7 @@ ${actions.map(printAction).join("\n")}\n`;
       );
     } else {
       return this.and(
-        MatcherPromise.create(
+        new MatcherPromise(
           equals(objectOrPredicate),
           `equal to ${trySerialize(objectOrPredicate)}`,
           this.store
@@ -132,7 +124,7 @@ ${actions.map(printAction).join("\n")}\n`;
 
   asserting(assertion: any => any): MatcherPromise {
     return this.and(
-      MatcherPromise.create(
+      new MatcherPromise(
         action => {
           try {
             assertion(action);

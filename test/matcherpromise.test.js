@@ -12,7 +12,7 @@ describe("MatcherPromise", () => {
       unregisterMatcher: jest.fn()
     };
 
-    const matcher = MatcherPromise.create(
+    const matcher = new MatcherPromise(
       action => action.attrA === "attrA",
       "attrA equals attrA",
       store
@@ -26,7 +26,7 @@ describe("MatcherPromise", () => {
   describe("create", () => {
     it("should register the matcher with the store", () => {
       const store = { registerMatcher: jest.fn() };
-      const matcher = MatcherPromise.create(action => true, "woop", store);
+      const matcher = new MatcherPromise(action => true, "woop", store);
       expect(store.registerMatcher).toHaveBeenCalledWith(matcher);
     });
   });
@@ -37,12 +37,12 @@ describe("MatcherPromise", () => {
       unregisterMatcher: () => undefined
     };
 
-    const matcherA = MatcherPromise.create(
+    const matcherA = new MatcherPromise(
       action => action.attrA === "attrA",
       "attrA equals attrA",
       dummyStore
     );
-    const matcherB = MatcherPromise.create(
+    const matcherB = new MatcherPromise(
       action => action.attrB === "attrB",
       "attrB equals attrB",
       dummyStore
@@ -79,12 +79,12 @@ describe("MatcherPromise", () => {
         unregisterMatcher: jest.fn()
       };
 
-      const matcherA = MatcherPromise.create(
+      const matcherA = new MatcherPromise(
         action => action.attrA === "attrA",
         "attrA equals attrA",
         store
       );
-      const matcherB = MatcherPromise.create(
+      const matcherB = new MatcherPromise(
         action => action.attrB === "attrB",
         "attrB equals attrB",
         store
