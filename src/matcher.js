@@ -53,13 +53,6 @@ class MatcherPromise implements PromiseLike {
 
   fail(timeout: number): void {
     const actions = this.store.actions;
-    const longestMessage: number = actions.reduce(
-      (last, action) => Math.max(last, action.type.length),
-      0
-    );
-
-    const printAction = ({ type, ...props }) =>
-      sprintf(`\t%${longestMessage + 3}s\t%s`, type, trySerialize(props));
 
     const message = `Expected action ${
       this.errorMessage
@@ -67,8 +60,7 @@ class MatcherPromise implements PromiseLike {
 
 The following actions got dispatched to the store instead (${actions.length}):
 
-${sprintf(`\t%${longestMessage + 3}s\t%s`, "TYPE", "PROPS")}
-${actions.map(printAction).join("\n")}\n`;
+${printTable(actions)}\n`;
 
     this.reject(new Error(message));
   }
@@ -177,10 +169,24 @@ class NotMatcherPromise extends MatcherPromise {
     }
   }
 
+  fail(timeout: number): void {
+    const actions = this.store.actions;
+
+    const message = `Expected action ${
+      this.errorMessage
+    } not to be dispatched to store, but was dispatched.
+
+The following actions got dispatched to the store (${actions.length}):
+
+${printTable(actions)}\n`;
+
+    this.reject(new Error(message));
+  }
+
   and(matcherPromise: MatcherPromise): NotMatcherPromise {
     this.catch(() => undefined);
     this.store.unregisterMatcher(this);
-    
+
     matcherPromise.catch(() => undefined);
     this.store.unregisterMatcher(matcherPromise);
 
@@ -210,5 +216,18 @@ class EmptyNotMatcherPromise extends NotMatcherPromise {
     );
   }
 }
+
+const printTable = actions => {
+  const longestMessage: number = actions.reduce(
+    (last, action) => Math.max(last, action.type.length),
+    0
+  );
+
+  const printAction = ({ type, ...props }) =>
+    sprintf(`\t%${longestMessage + 3}s\t%s`, type, trySerialize(props));
+
+  return `${sprintf(`\t%${longestMessage + 3}s\t%s`, "TYPE", "PROPS")}
+${actions.map(printAction).join("\n")}`;
+};
 
 export { MatcherPromise, NotMatcherPromise };

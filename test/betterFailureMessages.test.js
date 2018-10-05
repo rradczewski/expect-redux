@@ -19,7 +19,34 @@ describe("better failure messages", () => {
         .matching(foo => foo === true);
       fail("No error thrown");
     } catch (e) {
-      expect(e.message).toContain('foo\t{"value":"bla"}');
+      expect(e.message).toMatch(
+        /Expected action of type '\w+' and passing predicate '[^']+' to be dispatched to store, but did not happen in \d+ms/
+      );
+      expect(e.message).toMatch(
+        "The following actions got dispatched to the store instead (2)"
+      );
+      expect(e.message).toMatch('foo\t{"value":"bla"}');
+    }
+  });
+
+  it("should negate the message for toNotDispatchAnAction()", async () => {
+    const store = createStore(identity, {}, storeSpy);
+
+    store.dispatch({ type: "bar", value: "bla" });
+
+    try {
+      await expectRedux(store)
+        .toNotDispatchAnAction()
+        .ofType("bar");
+      fail("No error thrown");
+    } catch (e) {
+      expect(e.message).toMatch(
+        "Expected action of type 'bar' not to be dispatched to store, but was dispatched"
+      );
+      expect(e.message).toMatch(
+        "The following actions got dispatched to the store (2)"
+      );
+      expect(e.message).toMatch('bar\t{"value":"bla"}');
     }
   });
 

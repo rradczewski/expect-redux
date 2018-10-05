@@ -22,7 +22,7 @@ const testSyncAndAsync = (action, fun) => {
   testEventuallyDispatchedAction(action, fun);
 };
 
-describe("Testing actions", () => {
+describe("toDispatchAnAction()", () => {
   describe("ofType", () => {
     testSyncAndAsync({ type: "TEST_ACTION" }, (store, done) =>
       expectRedux(store)
