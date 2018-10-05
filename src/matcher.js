@@ -3,41 +3,53 @@ import { propEq, equals, allPass } from "ramda";
 import { trySerialize } from "./_trySerialize";
 import { sprintf } from "sprintf-js";
 
-class MatcherPromise extends Promise<*> {
+import type { StoreWithSpy } from "./storeSpy";
+
+type Resolve = (result?: any) => mixed;
+type Reject = (reason?: any) => mixed;
+interface PromiseLike {
+  then(
+    onFulfill: null | void,
+    onReject: (error: any) => PromiseLike | mixed
+  ): PromiseLike;
+  catch(onReject: (error: any) => PromiseLike | mixed): PromiseLike;
+}
+
+class MatcherPromise implements PromiseLike {
+  innerPromise: Promise<*>;
   store: any;
   resolve: Function;
   reject: Function;
   errorMessage: string;
   predicate: any => boolean;
 
-  static empty: (store: any) => MatcherPromise;
+  static empty(store: StoreWithSpy<*, *, *>) {
+    return new EmptyMatcherPromise(store);
+  }
 
   static create(
     predicate: any => boolean,
     errorMessage: string,
-    store: any
+    store: StoreWithSpy<*, *, *>
   ): MatcherPromise {
-
-    let resolve: Function, reject: Function;
-    const promise = new MatcherPromise((_resolve, _reject) => {
-      resolve = _resolve;
-      reject = _reject;
-    });
-    promise.store = store;
-
-    // $FlowFixMe
-    promise.resolve = resolve;
-    // $FlowFixMe
-    promise.reject = reject;
-    promise.errorMessage = errorMessage;
-    promise.predicate = predicate;
-
-    store.registerMatcher(promise);
-    return promise;
+    return new MatcherPromise(predicate, errorMessage, store);
   }
 
-  constructor(fun: any) {
-    super(fun);
+  constructor(
+    predicate: any => boolean,
+    errorMessage: string,
+    store: StoreWithSpy<*, *, *>
+  ) {
+    this.predicate = predicate;
+    this.errorMessage = errorMessage;
+    this.store = store;
+
+    this.innerPromise = new Promise((resolve, reject) => {
+      this.resolve = resolve;
+      this.reject = reject;
+    });
+
+    store.registerMatcher(this);
   }
 
   test(action: any): void {
@@ -54,19 +66,27 @@ class MatcherPromise extends Promise<*> {
       0
     );
 
-    this.reject(
-      new Error(`Expected ${
-        this.errorMessage
-      } to be dispatched to store, but did not happen in ${timeout}ms.
+    const printAction = ({ type, ...props }) =>
+      sprintf(`\t%${longestMessage + 3}s\t%s`, type, trySerialize(props));
 
-  The following actions got dispatched to the store instead (${actions.length}):
-  ${actions
-    .map(({ type, ...props }) =>
-      sprintf(`\t%${longestMessage + 3}s:\t%s`, type, trySerialize(props))
-    )
-    .join("\n")}
-    `)
-    );
+    const message = `Expected action ${
+      this.errorMessage
+    } to be dispatched to store, but did not happen in ${timeout}ms.
+
+The following actions got dispatched to the store instead (${actions.length}):
+
+${sprintf(`\t%${longestMessage + 3}s\t%s`, 'TYPE', 'PROPS')}
+${actions.map(printAction).join("\n")}\n`;
+
+    this.reject(new Error(message));
+  }
+
+  then(onFulfill: null | void, onReject?: (error: any) => PromiseLike | mixed) {
+    return this.innerPromise.then(onFulfill, onReject);
+  }
+
+  catch(onReject: (error: any) => PromiseLike | mixed) {
+    return this.innerPromise.catch(onReject);
   }
 
   and(matcherPromise: MatcherPromise): MatcherPromise {
@@ -129,18 +149,14 @@ class MatcherPromise extends Promise<*> {
 }
 
 class EmptyMatcherPromise extends MatcherPromise {
-  static create(store) {
-    const promise = MatcherPromise.create(() => true, "", store);
+  constructor(store: StoreWithSpy<*, *, *>) {
+    super(() => true, "", store);
+  }
 
-    // $FlowFixMe
-    promise.and = function(matcher) {
-      store.unregisterMatcher(this);
-      return matcher;
-    };
-    return promise;
+  and(matcher: MatcherPromise): MatcherPromise {
+    this.store.unregisterMatcher(this);
+    return matcher;
   }
 }
-
-MatcherPromise.empty = EmptyMatcherPromise.create;
 
 export { MatcherPromise };

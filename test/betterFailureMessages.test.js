@@ -19,7 +19,7 @@ describe("better failure messages", () => {
         .matching(foo => foo === true);
       fail("No error thrown");
     } catch (e) {
-      expect(e.message).toContain('foo:\t{"value":"bla"}');
+      expect(e.message).toContain('foo\t{"value":"bla"}');
     }
   });
 
