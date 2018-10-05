@@ -19,6 +19,6 @@
   "devDependencies": {
     "enzyme": "^3.3.0",
     "enzyme-adapter-react-16": "^1.1.1",
-    "expect-redux": "^3.2.2"
+    "expect-redux": "file:../"
   }
 }
