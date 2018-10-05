@@ -1,8 +1,18 @@
+// @flow
+import type { Store, StoreEnhancer } from 'redux';
 import { MatcherPromise } from "./matcher";
 
-const storeEnhancer = nextCreateStore => (reducer, initialState, enhancer) => {
-  const actions = [];
-  const matchers = new Set();
+export type Action = Object;
+export type StoreWithSpy<S, A, D> = Store<S, A, D> & {
+  actions: Array<Action>;
+  timeout: (number) => void;
+  registerMatcher: (MatcherPromise) => void;
+  unregisterMatcher: (MatcherPromise) => void;
+}
+
+const storeEnhancer: StoreEnhancer<*, *, *> = nextCreateStore => (reducer, initialState, enhancer): StoreWithSpy<*, *, *> => {
+  const actions: Array<Action> = [];
+  const matchers = new Set<MatcherPromise>();
 
   const recorder = (state, action) => {
     actions.push(action);
@@ -23,12 +33,13 @@ const storeEnhancer = nextCreateStore => (reducer, initialState, enhancer) => {
     matchers.delete(matcher);
   };
 
-  return Object.assign({}, store, {
-    actions: actions,
-    timeout: timeout,
-    registerMatcher: registerMatcher,
-    unregisterMatcher: unregisterMatcher
-  });
+  return {
+    ...store,
+    actions,
+    timeout,
+    registerMatcher,
+    unregisterMatcher
+  };
 };
 
 export default storeEnhancer;
