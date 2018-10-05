@@ -3,10 +3,26 @@
 [![CI](https://travis-ci.org/rradczewski/expect-redux.svg)](https://travis-ci.org/rradczewski/expect-redux)
 [![Deps](https://david-dm.org/rradczewski/expect-redux.svg)](https://david-dm.org/rradczewski/expect-redux) [![DevDeps](https://david-dm.org/rradczewski/expect-redux/dev-status.svg)](https://david-dm.org/rradczewski/expect-redux)
 
-# expect-redux
-Assertions for testing a redux store and the actions dispatched to it using test runners that support returning a Promise like [`jest`](https://github.com/facebook/jest/) or [`mocha`](https://github.com/mochajs/mocha).
+# expect-redux - Side-effect library agnostic testing for redux
 
-I developed a first rudimentary version of `expect-redux` for use in our projects at [@VaamoTech](https://twitter.com/VaamoTech) for [Vaamo](https://vaamo.de).
+`expect-redux` is a testing library that enables you to test a redux store, no matter what side-effect library (e.g. `redux-saga` or `redux-observable`) you are using.
+
+Here's a simple example to give you an idea:
+
+```js
+it("should dispatch the INCREASE_COUNTER action", () => {
+  const store = createStore(...);
+  store.dispatch({ type: "INCREASE_COUNTER" });
+
+  return expectRedux(store)
+    .toDispatchAnAction()
+    .ofType("INCREASE_COUNTER")
+});
+```
+
+It doesn't matter if the action is dispatched asynchronously or even if it already was dispatched when you call `expectRedux(store)...`, `expect-redux` records all previously dispatched actions as well as every action that will be dispatched.
+
+A first rudimentary version of `expect-redux` was developed for use in our projects at [@VaamoTech](https://twitter.com/VaamoTech) for [Vaamo](https://vaamo.de).
 
 ## Installation
 
@@ -42,7 +58,7 @@ describe('my action dispatcher', () => {
 
 ## API
 
-### `expectRedux.enableBetterErrorMessages({timeout: number} | false)`
+### `expectRedux.configure({ betterErrorMessagesTimeout: number | false })`
 
 Fail if no expectation matched after `timeout` miliseconds. This is a workaround so you get a meaningful error message instead of a timeout error. Can go into the setup file as it's a global switch.
 
@@ -69,6 +85,12 @@ Matches an action that both is of type `type` and satisfies the given `predicate
 ### `expectRedux(store).toDispatchAnAction().ofType(type).asserting(assertion)`
 
 Matches an action that both is of type `type` and does not let the given `assertion` throw. Assertion must be a function `Action => any`, e.g. `action => expect(action.payload).toEqual(42)`. Will not fail if the `assertion` throws.
+
+### `expectRedux(store).toNotDispatchAnAction(timeout: number)...`
+
+Will negate all following predicates. If an action is dispatched that matches the predicates before `timeout` was reached, the test will fail.
+
+Note that this is a highly dangerous feature, as it relies on the `timeout` to prove that an action was not dispatched. If it takes longer for your side effect to dispatch the action, the test could misleadingly pass even though the action is ultimately dispatched to the store.
 
 
 ## Similar or related libraries
