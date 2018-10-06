@@ -3,8 +3,10 @@ language: node_js
 install:
   - npm install
   - npm run build
-  - (cd example/ && npm install)
+  - (cd examples/redux-thunk-example && npm install)
+  - (cd examples/redux-saga-example && npm install)
 
 script:
   - npm test
-  - (cd example/ && npm test)
+  - (cd examples/redux-thunk-example && npm test)
+  - (cd examples/redux-saga-example && npm test)

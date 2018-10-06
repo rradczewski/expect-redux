@@ -1,5 +1,5 @@
 {
-  "name": "expect-redux-example",
+  "name": "redux-thunk-expect-redux-example",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -19,6 +19,6 @@
   "devDependencies": {
     "enzyme": "^3.3.0",
     "enzyme-adapter-react-16": "^1.1.1",
-    "expect-redux": "file:../"
+    "expect-redux": "file:../../"
   }
 }
