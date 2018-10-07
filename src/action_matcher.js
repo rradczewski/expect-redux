@@ -66,6 +66,10 @@ ${printTable(actions)}\n`;
     return this.innerPromise.catch(onReject);
   }
 
+  end(cb: Function) {
+    return this.then(() => cb());
+  }
+
   and(matcherPromise: ActionMatcher): ActionMatcher {
     this.store.unregisterMatcher(this);
     this.store.unregisterMatcher(matcherPromise);

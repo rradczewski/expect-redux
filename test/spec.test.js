@@ -67,6 +67,18 @@ describe("expectRedux(store)", () => {
         .ofType("MY_TYPE")
         .asserting(action => expect(action).toHaveProperty("payload", 42));
     });
+
+    describe("end(done)", () => {
+      it("should call done when it resolves", done => {
+        const store = storeFactory();
+        store.dispatch({ type: "MY_TYPE" });
+
+        expectRedux(store)
+          .toDispatchAnAction()
+          .ofType("MY_TYPE")
+          .end(done);
+      });
+    });
   });
 
   describe("toNotDispatchAnAction(timeout)", () => {
@@ -156,15 +168,15 @@ describe("expectRedux(store)", () => {
       });
     });
 
-    describe('end(done)', () => {
-      it('should call done with no argument if it resolves', (done) => {
+    describe("end(done)", () => {
+      it("should call done with no argument if it resolves", done => {
         const store = storeFactory(undefined, { foo: "bar" });
 
         expectRedux(store)
           .toHaveState()
           .matching({ foo: "bar" })
-          .end(done)
+          .end(done);
       });
-    })
+    });
   });
 });
