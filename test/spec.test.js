@@ -155,5 +155,16 @@ describe("expectRedux(store)", () => {
           .matching("value");
       });
     });
+
+    describe('end(done)', () => {
+      it('should call done with no argument if it resolves', (done) => {
+        const store = storeFactory(undefined, { foo: "bar" });
+
+        expectRedux(store)
+          .toHaveState()
+          .matching({ foo: "bar" })
+          .end(done)
+      });
+    })
   });
 });

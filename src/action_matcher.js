@@ -55,7 +55,10 @@ ${printTable(actions)}\n`;
     this.reject(new Error(message));
   }
 
-  then(onFulfill: null | void, onReject?: (error: any) => PromiseLike | mixed) {
+  then(
+    onFulfill?: (result: any) => PromiseLike | mixed,
+    onReject?: (error: any) => PromiseLike | mixed
+  ) {
     return this.innerPromise.then(onFulfill, onReject);
   }
 

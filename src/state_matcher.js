@@ -47,12 +47,19 @@ class StateMatcher implements PromiseLike {
     return SelectingStateMatcher.empty(selector, this.store);
   }
 
-  then(onFulfill: null | void, onReject?: (error: any) => PromiseLike | mixed) {
+  then(
+    onFulfill?: (result: any) => PromiseLike | mixed,
+    onReject?: (error: any) => PromiseLike | mixed
+  ) {
     return this.innerPromise.then(onFulfill, onReject);
   }
 
   catch(onReject: (error: any) => PromiseLike | mixed) {
     return this.innerPromise.catch(onReject);
+  }
+
+  end(cb: Function) {
+    return this.then(() => cb());
   }
 }
 
