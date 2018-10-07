@@ -3,9 +3,9 @@
 [![CI](https://travis-ci.org/rradczewski/expect-redux.svg)](https://travis-ci.org/rradczewski/expect-redux)
 [![Deps](https://david-dm.org/rradczewski/expect-redux.svg)](https://david-dm.org/rradczewski/expect-redux) [![DevDeps](https://david-dm.org/rradczewski/expect-redux/dev-status.svg)](https://david-dm.org/rradczewski/expect-redux)
 
-# expect-redux - Side-effect library agnostic testing for redux
+# expect-redux - black box testing for redux
 
-`expect-redux` is a testing library that enables you to write tests that verify the behavior of the side-effect library you are using, no matter if it's `redux-saga`, `redux-observable` or just `redux-thunk`. It provides a fluent DSL that makes writing tests with asynchronousness in mind a lot easier.
+`expect-redux` is a testing library that enables you to write tests that verify the behavior of your business logic, no matter if you are using `redux-saga`, `redux-observable` or just `redux-thunk`. It provides a fluent DSL that makes writing tests with asynchronousness in mind a lot easier.
 
 Here's a simple example to give you an idea:
 
