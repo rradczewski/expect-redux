@@ -3,8 +3,8 @@ import { propEq, equals, allPass } from "ramda";
 import { trySerialize } from "./_trySerialize";
 import { sprintf } from "sprintf-js";
 
-import  { PromiseLike } from "./_promiseLike";
-import  { StoreWithSpy } from "./storeSpy";
+import type { PromiseLike } from "./_promiseLike";
+import type { StoreWithSpy } from "./storeSpy";
 
 class ActionMatcher implements PromiseLike {
   innerPromise: Promise<*>;

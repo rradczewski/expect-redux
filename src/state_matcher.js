@@ -70,7 +70,7 @@ class SelectingStateMatcher extends StateMatcher {
 
   constructor(
     selector: Object => mixed,
-    predicate: Object => boolean,
+    predicate: mixed => boolean,
     store: StoreWithSpy<*, *, *>
   ) {
     super(predicate, store);
