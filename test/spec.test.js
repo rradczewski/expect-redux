@@ -92,24 +92,68 @@ describe("expectRedux(store)", () => {
     it("should fail if an action is dispatched that matches", () => {
       const store = storeFactory();
 
-      store.dispatch({ type: "MY_TYPE"});
+      store.dispatch({ type: "MY_TYPE" });
 
       return expectRedux(store)
         .toNotDispatchAnAction(0)
         .ofType("MY_TYPE")
-        .then(() => Promise.reject('Was called'), () => Promise.resolve());
+        .then(() => Promise.reject("Was called"), () => Promise.resolve());
     });
 
     it("should fail if an action is dispatched that matches a composite", () => {
       const store = storeFactory();
 
-      store.dispatch({ type: "MY_TYPE", foo: 'BAR'});
+      store.dispatch({ type: "MY_TYPE", foo: "BAR" });
 
       return expectRedux(store)
         .toNotDispatchAnAction(0)
         .ofType("MY_TYPE")
-        .matching(action => action.foo === 'BAR')
-        .then(() => Promise.reject('Was called'), () => Promise.resolve());
+        .matching(action => action.foo === "BAR")
+        .then(() => Promise.reject("Was called"), () => Promise.resolve());
+    });
+  });
+
+  describe("toHaveState()", () => {
+    describe("matching(obj)", () => {
+      it("should match on the exact state", () => {
+        const store = storeFactory(undefined, { foo: "bar" });
+
+        return expectRedux(store)
+          .toHaveState()
+          .matching({ foo: "bar" });
+      });
+
+      it("should not match if a value is different", done => {
+        const store = storeFactory(undefined, { foo: "bar" });
+
+        expectRedux(store)
+          .toHaveState()
+          .matching({ foo: "different" })
+          .then(() => done("should not happen"));
+
+        setTimeout(() => done());
+      });
+    });
+
+    describe("withSubtree(selector)", () => {
+      it("applies a selector function before a matcher", () => {
+        const store = storeFactory(undefined, { foo: { bar: "value" } });
+
+        return expectRedux(store)
+          .toHaveState()
+          .withSubtree(state => state.foo)
+          .matching({ bar: "value" });
+      });
+
+      it("should be composable", () => {
+        const store = storeFactory(undefined, { foo: { bar: "value" } });
+
+        return expectRedux(store)
+          .toHaveState()
+          .withSubtree(state => state.foo)
+          .withSubtree(foo => foo.bar)
+          .matching("value");
+      });
     });
   });
 });

@@ -3,6 +3,7 @@ import type { StoreWithSpy } from "./storeSpy";
 import { propEq, equals, allPass } from "ramda";
 
 import { ActionMatcher, NotActionMatcher } from "./action_matcher";
+import { StateMatcher } from "./state_matcher";
 
 const expectRedux = (
   store: StoreWithSpy<*, *, *> & { timeout: number => mixed }
@@ -13,9 +14,10 @@ const expectRedux = (
   }
 
   return {
-    toDispatchAnAction: (): MatcherPromise => MatcherPromise.empty(store),
-    toNotDispatchAnAction: (timeout: number): MatcherPromise =>
-      NotMatcherPromise.empty(store, timeout)
+    toHaveState: (): StateMatcher => StateMatcher.empty(store),
+    toDispatchAnAction: (): ActionMatcher => ActionMatcher.empty(store),
+    toNotDispatchAnAction: (timeout: number): ActionMatcher =>
+      NotActionMatcher.empty(store, timeout)
   };
 };
 
