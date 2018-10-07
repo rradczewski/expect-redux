@@ -3,19 +3,10 @@ import { propEq, equals, allPass } from "ramda";
 import { trySerialize } from "./_trySerialize";
 import { sprintf } from "sprintf-js";
 
-import type { StoreWithSpy } from "./storeSpy";
+import  { PromiseLike } from "./_promiseLike";
+import  { StoreWithSpy } from "./storeSpy";
 
-type Resolve = (result?: any) => mixed;
-type Reject = (reason?: any) => mixed;
-interface PromiseLike {
-  then(
-    onFulfill: null | void,
-    onReject: (error: any) => PromiseLike | mixed
-  ): PromiseLike;
-  catch(onReject: (error: any) => PromiseLike | mixed): PromiseLike;
-}
-
-class MatcherPromise implements PromiseLike {
+class ActionMatcher implements PromiseLike {
   innerPromise: Promise<*>;
   store: any;
   resolve: Function;
@@ -23,9 +14,9 @@ class MatcherPromise implements PromiseLike {
   errorMessage: string;
   predicate: any => boolean;
 
-  static empty: (...args: any) => MatcherPromise = (
+  static empty: (...args: any) => ActionMatcher = (
     store: StoreWithSpy<*, *, *>
-  ) => new EmptyMatcherPromise(store);
+  ) => new EmptyActionMatcher(store);
 
   constructor(
     predicate: any => boolean,
@@ -39,9 +30,8 @@ class MatcherPromise implements PromiseLike {
     this.innerPromise = new Promise((resolve, reject) => {
       this.resolve = resolve;
       this.reject = reject;
+      this.store.registerMatcher(this);
     });
-
-    store.registerMatcher(this);
   }
 
   test(action: any): void {
@@ -73,11 +63,11 @@ ${printTable(actions)}\n`;
     return this.innerPromise.catch(onReject);
   }
 
-  and(matcherPromise: MatcherPromise): MatcherPromise {
+  and(matcherPromise: ActionMatcher): ActionMatcher {
     this.store.unregisterMatcher(this);
     this.store.unregisterMatcher(matcherPromise);
 
-    return new MatcherPromise(
+    return new ActionMatcher(
       allPass([this.predicate, matcherPromise.predicate]),
       `${this.errorMessage} and ${matcherPromise.errorMessage}`,
       this.store
@@ -86,14 +76,14 @@ ${printTable(actions)}\n`;
 
   ofType(type: string) {
     return this.and(
-      new MatcherPromise(propEq("type", type), `of type '${type}'`, this.store)
+      new ActionMatcher(propEq("type", type), `of type '${type}'`, this.store)
     );
   }
 
-  matching(objectOrPredicate: Object | (any => boolean)): MatcherPromise {
+  matching(objectOrPredicate: Object | (any => boolean)): ActionMatcher {
     if (typeof objectOrPredicate === "function") {
       return this.and(
-        new MatcherPromise(
+        new ActionMatcher(
           objectOrPredicate,
           `passing predicate '${objectOrPredicate.toString()}'`,
           this.store
@@ -101,7 +91,7 @@ ${printTable(actions)}\n`;
       );
     } else {
       return this.and(
-        new MatcherPromise(
+        new ActionMatcher(
           equals(objectOrPredicate),
           `equal to ${trySerialize(objectOrPredicate)}`,
           this.store
@@ -110,9 +100,9 @@ ${printTable(actions)}\n`;
     }
   }
 
-  asserting(assertion: any => any): MatcherPromise {
+  asserting(assertion: any => any): ActionMatcher {
     return this.and(
-      new MatcherPromise(
+      new ActionMatcher(
         action => {
           try {
             assertion(action);
@@ -128,22 +118,22 @@ ${printTable(actions)}\n`;
   }
 }
 
-class EmptyMatcherPromise extends MatcherPromise {
+class EmptyActionMatcher extends ActionMatcher {
   constructor(store: StoreWithSpy<*, *, *>) {
     super(() => true, "", store);
   }
 
-  and(matcher: MatcherPromise): MatcherPromise {
+  and(matcher: ActionMatcher): ActionMatcher {
     this.store.unregisterMatcher(this);
     return matcher;
   }
 }
 
-class NotMatcherPromise extends MatcherPromise {
-  static empty: (...args: any) => MatcherPromise = (
+class NotActionMatcher extends ActionMatcher {
+  static empty: (...args: any) => ActionMatcher = (
     store: StoreWithSpy<*, *, *>,
     timeout: number
-  ): NotMatcherPromise => new EmptyNotMatcherPromise(store, timeout);
+  ): NotActionMatcher => new EmptyNotActionMatcher(store, timeout);
 
   timeout: number;
 
@@ -183,14 +173,14 @@ ${printTable(actions)}\n`;
     this.reject(new Error(message));
   }
 
-  and(matcherPromise: MatcherPromise): NotMatcherPromise {
+  and(matcherPromise: ActionMatcher): NotActionMatcher {
     this.catch(() => undefined);
     this.store.unregisterMatcher(this);
 
     matcherPromise.catch(() => undefined);
     this.store.unregisterMatcher(matcherPromise);
 
-    return new NotMatcherPromise(
+    return new NotActionMatcher(
       allPass([this.predicate, matcherPromise.predicate]),
       `${this.errorMessage} and ${matcherPromise.errorMessage}`,
       this.store,
@@ -199,16 +189,16 @@ ${printTable(actions)}\n`;
   }
 }
 
-class EmptyNotMatcherPromise extends NotMatcherPromise {
+class EmptyNotActionMatcher extends NotActionMatcher {
   constructor(store: StoreWithSpy<*, *, *>, timeout: number) {
     super(() => false, "", store, timeout);
   }
 
-  and(matcher: MatcherPromise): NotMatcherPromise {
+  and(matcher: ActionMatcher): NotActionMatcher {
     this.store.unregisterMatcher(this);
     this.store.unregisterMatcher(matcher);
 
-    return new NotMatcherPromise(
+    return new NotActionMatcher(
       matcher.predicate,
       matcher.errorMessage,
       matcher.store,
@@ -230,4 +220,4 @@ const printTable = actions => {
 ${actions.map(printAction).join("\n")}`;
 };
 
-export { MatcherPromise, NotMatcherPromise };
+export { ActionMatcher, NotActionMatcher };

@@ -2,9 +2,10 @@ import { createStore } from "redux";
 import { storeSpy, expectRedux } from "../src/";
 import { identity } from "ramda";
 
-const storeFactory = () => createStore(identity, {}, storeSpy);
-
 describe("expectRedux(store)", () => {
+  const storeFactory = (reducer = identity, initialState = {}) =>
+    createStore(reducer, initialState, storeSpy);
+
   describe("toDispatchAnAction()", () => {
     it("matching(obj)", () => {
       const store = storeFactory();

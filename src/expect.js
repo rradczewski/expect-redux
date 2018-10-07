@@ -2,7 +2,7 @@
 import type { StoreWithSpy } from "./storeSpy";
 import { propEq, equals, allPass } from "ramda";
 
-import { MatcherPromise, NotMatcherPromise } from "./matcher";
+import { ActionMatcher, NotActionMatcher } from "./action_matcher";
 
 const expectRedux = (
   store: StoreWithSpy<*, *, *> & { timeout: number => mixed }

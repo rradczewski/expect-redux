@@ -1,18 +1,18 @@
-import { MatcherPromise, testSymbol, errorMessageSymbol } from "../src/matcher";
+import { ActionMatcher, testSymbol, errorMessageSymbol } from "../src/action_matcher";
 import {
   registerMatcherSymbol,
   unregisterMatcherSymbol
 } from "../src/storeSpy";
 import { assertPromiseDidNotResolve } from "./_assertPromiseDidNotResolve";
 
-describe("MatcherPromise", () => {
+describe("ActionMatcher", () => {
   it("should unregister a matcher when it matches", () => {
     const store = {
       registerMatcher: jest.fn(),
       unregisterMatcher: jest.fn()
     };
 
-    const matcher = new MatcherPromise(
+    const matcher = new ActionMatcher(
       action => action.attrA === "attrA",
       "attrA equals attrA",
       store
@@ -26,23 +26,23 @@ describe("MatcherPromise", () => {
   describe("constructor", () => {
     it("should register the matcher with the store", () => {
       const store = { registerMatcher: jest.fn() };
-      const matcher = new MatcherPromise(action => true, "woop", store);
+      const matcher = new ActionMatcher(action => true, "woop", store);
       expect(store.registerMatcher).toHaveBeenCalledWith(matcher);
     });
   });
 
-  describe(".and(MatcherPromise)", () => {
+  describe(".and(ActionMatcher)", () => {
     const dummyStore = {
       registerMatcher: () => undefined,
       unregisterMatcher: () => undefined
     };
 
-    const matcherA = new MatcherPromise(
+    const matcherA = new ActionMatcher(
       action => action.attrA === "attrA",
       "attrA equals attrA",
       dummyStore
     );
-    const matcherB = new MatcherPromise(
+    const matcherB = new ActionMatcher(
       action => action.attrB === "attrB",
       "attrB equals attrB",
       dummyStore
@@ -79,12 +79,12 @@ describe("MatcherPromise", () => {
         unregisterMatcher: jest.fn()
       };
 
-      const matcherA = new MatcherPromise(
+      const matcherA = new ActionMatcher(
         action => action.attrA === "attrA",
         "attrA equals attrA",
         store
       );
-      const matcherB = new MatcherPromise(
+      const matcherB = new ActionMatcher(
         action => action.attrB === "attrB",
         "attrB equals attrB",
         store
