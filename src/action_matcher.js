@@ -8,7 +8,7 @@ import type { StoreWithSpy } from "./storeSpy";
 
 class ActionMatcher implements PromiseLike {
   innerPromise: Promise<*>;
-  store: any;
+  store: StoreWithSpy<*, *, *>;
   resolve: Function;
   reject: Function;
   errorMessage: string;

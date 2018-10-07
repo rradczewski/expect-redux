@@ -32,12 +32,8 @@ class StateMatcher implements PromiseLike {
     });
   }
 
-  getState() {
-    return this.store.getState();
-  }
-
   test() {
-    if (this.predicate(this.getState())) {
+    if (this.predicate(this.store.getState())) {
       this.unsubscribe();
       this.resolve();
     }
