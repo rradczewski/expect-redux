@@ -1,9 +1,9 @@
 // @flow
 import type { StoreWithSpy } from "./storeSpy";
-import { propEq, equals, allPass } from "ramda";
-
-import { ActionMatcher, NotActionMatcher } from "./action_matcher";
+import { ActionMatcher } from "./action_matcher";
+import { NotActionMatcher } from "./not_action_matcher";
 import { StateMatcher } from "./state_matcher";
+
 
 const expectRedux = (
   store: StoreWithSpy<*, *, *> & { timeout: number => mixed }
