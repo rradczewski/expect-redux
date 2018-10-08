@@ -67,7 +67,7 @@ ${printTable(actions)}\n`;
   }
 
   end(cb: Function) {
-    return this.then(() => cb());
+    return this.then(() => cb(), (error) => cb(error));
   }
 
   and(matcherPromise: ActionMatcher): ActionMatcher {
