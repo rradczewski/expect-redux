@@ -109,6 +109,8 @@ it("works if you use async-await", async () => {
 
 Fail if no expectation matched after `timeout` miliseconds. This is a workaround so you get a meaningful error message instead of a timeout error. Can go into the setup file as it's a global switch.
 
+![A screencast showing how the error messages look like](docs/example.gif)
+
 ### Assertions on Actions
 
 `expect-redux` is built to assert behavior of side-effects, less the state that results in an action being dispatched. `toDispatchAnAction()` and `toNotDispatchAnAction()` encourage testing the reducer in isolation and instead testing the action producing side-effects.
