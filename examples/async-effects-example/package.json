@@ -1,0 +1,25 @@
+{
+  "name": "async-effects-example",
+  "version": "1.0.0",
+  "description": "A simple example of how to use expect-redux",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "author": "Raimo Radczewski <raimoradczewski@googlemail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "redux": "^4.0.0",
+    "redux-thunk": "^2.3.0"
+  },
+  "jest": {
+    "setupFiles": [
+      "<rootDir>/src/setupTests.js"
+    ]
+  },
+  "devDependencies": {
+    "babel-core": "^7.0.0-bridge.0",
+    "expect-redux": "file:../../",
+    "jest": "^23.6.0"
+  }
+}
