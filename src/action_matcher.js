@@ -67,61 +67,49 @@ ${printTable(actions)}\n`;
   }
 
   end(cb: Function) {
-    return this.then(() => cb(), (error) => cb(error));
+    return this.then(() => cb(), error => cb(error));
   }
 
-  and(matcherPromise: ActionMatcher): ActionMatcher {
+  and(
+    otherPredicate: any => boolean,
+    otherErrorMessage: string
+  ): ActionMatcher {
     this.store.unregisterMatcher(this);
-    this.store.unregisterMatcher(matcherPromise);
 
     return new ActionMatcher(
-      allPass([this.predicate, matcherPromise.predicate]),
-      `${this.errorMessage} and ${matcherPromise.errorMessage}`,
+      allPass([this.predicate, otherPredicate]),
+      `${this.errorMessage} and ${otherErrorMessage}`,
       this.store
     );
   }
 
   ofType(type: string) {
-    return this.and(
-      new ActionMatcher(propEq("type", type), `of type '${type}'`, this.store)
-    );
+    return this.and(propEq("type", type), `of type '${type}'`);
   }
 
   matching(objectOrPredicate: Object | (any => boolean)): ActionMatcher {
     if (typeof objectOrPredicate === "function") {
       return this.and(
-        new ActionMatcher(
-          objectOrPredicate,
-          `passing predicate '${objectOrPredicate.toString()}'`,
-          this.store
-        )
+        objectOrPredicate,
+        `passing predicate '${objectOrPredicate.toString()}'`
       );
     } else {
       return this.and(
-        new ActionMatcher(
-          equals(objectOrPredicate),
-          `equal to ${trySerialize(objectOrPredicate)}`,
-          this.store
-        )
+        equals(objectOrPredicate),
+        `equal to ${trySerialize(objectOrPredicate)}`
       );
     }
   }
 
   asserting(assertion: any => any): ActionMatcher {
-    return this.and(
-      new ActionMatcher(
-        action => {
-          try {
-            assertion(action);
-            return true;
-          } catch (e) {
-            return false;
-          }
-        },
-        `passing assertion '${assertion.toString()}'`,
-        this.store
-      )
-    );
+    return this.and(action => {
+      try {
+        assertion(action);
+        return true;
+      } catch (e) {
+        return false;
+      }
+    }, `passing assertion '${assertion.toString()}'`);
   }
 }
 
@@ -130,9 +118,12 @@ class EmptyActionMatcher extends ActionMatcher {
     super(() => true, "", store);
   }
 
-  and(matcher: ActionMatcher): ActionMatcher {
+  and(
+    otherPredicate: any => boolean,
+    otherErrorMessage: string
+  ): ActionMatcher {
     this.store.unregisterMatcher(this);
-    return matcher;
+    return new ActionMatcher(otherPredicate, otherErrorMessage, this.store);
   }
 }
 
@@ -180,16 +171,16 @@ ${printTable(actions)}\n`;
     this.reject(new Error(message));
   }
 
-  and(matcherPromise: ActionMatcher): NotActionMatcher {
+  and(
+    otherPredicate: any => boolean,
+    otherErrorMessage: string,
+  ): NotActionMatcher {
     this.catch(() => undefined);
     this.store.unregisterMatcher(this);
 
-    matcherPromise.catch(() => undefined);
-    this.store.unregisterMatcher(matcherPromise);
-
     return new NotActionMatcher(
-      allPass([this.predicate, matcherPromise.predicate]),
-      `${this.errorMessage} and ${matcherPromise.errorMessage}`,
+      allPass([this.predicate, otherPredicate]),
+      `${this.errorMessage} and ${otherErrorMessage}`,
       this.store,
       this.timeout
     );
@@ -201,14 +192,16 @@ class EmptyNotActionMatcher extends NotActionMatcher {
     super(() => false, "", store, timeout);
   }
 
-  and(matcher: ActionMatcher): NotActionMatcher {
+  and(
+    otherPredicate: any => boolean,
+    otherErrorMessage: string
+  ): NotActionMatcher {
     this.store.unregisterMatcher(this);
-    this.store.unregisterMatcher(matcher);
 
     return new NotActionMatcher(
-      matcher.predicate,
-      matcher.errorMessage,
-      matcher.store,
+      otherPredicate,
+      otherErrorMessage,
+      this.store,
       this.timeout
     );
   }

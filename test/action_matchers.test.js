@@ -42,32 +42,29 @@ describe("ActionMatcher", () => {
       "attrA equals attrA",
       dummyStore
     );
-    const matcherB = new ActionMatcher(
-      action => action.attrB === "attrB",
-      "attrB equals attrB",
-      dummyStore
-    );
+    const otherPredicate = action => action.attrB === "attrB";
+    const otherErrorMessage = "attrB equals attrB";
 
     it("should only resolve if both predicates match", () => {
-      const matcherBoth = matcherA.and(matcherB);
+      const matcherBoth = matcherA.and(otherPredicate, otherErrorMessage);
       matcherBoth.test({ attrA: "attrA", attrB: "attrB" });
       return matcherBoth;
     });
 
     it("should not resolve if the first one does not resolve", () => {
-      const matcherBoth = matcherA.and(matcherB);
+      const matcherBoth = matcherA.and(otherPredicate, otherErrorMessage);
       matcherBoth.test({ attrA: "NOT_ATTR_A", attrB: "attrB" });
       return assertPromiseDidNotResolve(matcherBoth);
     });
 
     it("should not resolve if the second one does not resolve", () => {
-      const matcherBoth = matcherA.and(matcherB);
+      const matcherBoth = matcherA.and(otherPredicate, otherErrorMessage);
       matcherBoth.test({ attrA: "attrA", attrB: "NOT_ATTR_B" });
       return assertPromiseDidNotResolve(matcherBoth);
     });
 
     it("should concatenate the error message", () => {
-      const matcherBoth = matcherA.and(matcherB);
+      const matcherBoth = matcherA.and(otherPredicate, otherErrorMessage);
       expect(matcherBoth.errorMessage).toEqual(
         "attrA equals attrA and attrB equals attrB"
       );
@@ -84,16 +81,10 @@ describe("ActionMatcher", () => {
         "attrA equals attrA",
         store
       );
-      const matcherB = new ActionMatcher(
-        action => action.attrB === "attrB",
-        "attrB equals attrB",
-        store
-      );
 
-      const matcherBoth = matcherA.and(matcherB);
+      const matcherBoth = matcherA.and(otherPredicate, otherErrorMessage);
       expect(store.registerMatcher).toHaveBeenCalledWith(matcherBoth);
       expect(store.unregisterMatcher).toHaveBeenCalledWith(matcherA);
-      expect(store.unregisterMatcher).toHaveBeenCalledWith(matcherB);
     });
   });
 });
