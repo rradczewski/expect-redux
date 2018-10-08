@@ -1,5 +1,6 @@
-[![npm version](https://badge.fury.io/js/expect-redux.svg)](https://badge.fury.io/js/expect-redux)
+![Logo](docs/logo.svg)
 
+[![npm version](https://badge.fury.io/js/expect-redux.svg)](https://badge.fury.io/js/expect-redux)
 [![CI](https://travis-ci.org/rradczewski/expect-redux.svg)](https://travis-ci.org/rradczewski/expect-redux)
 [![Deps](https://david-dm.org/rradczewski/expect-redux.svg)](https://david-dm.org/rradczewski/expect-redux) [![DevDeps](https://david-dm.org/rradczewski/expect-redux/dev-status.svg)](https://david-dm.org/rradczewski/expect-redux)
 
@@ -36,7 +37,7 @@ npm install --save-dev expect-redux@next
 
 ## Usage
 
-`expect-redux` asserts the behavior of your effects, so it's best if you test your store like you would create it in your application code, not in isolation. 
+`expect-redux` asserts the behavior of your effects, so it's best if you test your store like you would create it in your application code, not in isolation.
 
 In order to record actions that are dispatched to it, your store only needs to be configured with a spy as an additional `storeEnhancer`:
 
