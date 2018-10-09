@@ -9,50 +9,78 @@ import type { StoreWithSpy } from "./storeSpy";
 class ActionMatcher implements PromiseLike {
   innerPromise: Promise<*>;
   store: StoreWithSpy<*, *, *>;
-  resolve: Function;
-  reject: Function;
+  _resolve: Function;
+  _reject: Function;
   errorMessage: string;
   predicate: any => boolean;
+  timeout: number | false;
+  timeoutId: ?any;
 
   static empty: (...args: any) => ActionMatcher = (
-    store: StoreWithSpy<*, *, *>
-  ) => new EmptyActionMatcher(store);
+    store: StoreWithSpy<*, *, *>,
+    timeout: number | false
+  ) => new EmptyActionMatcher(store, timeout);
 
   constructor(
     predicate: any => boolean,
     errorMessage: string,
-    store: StoreWithSpy<*, *, *>
+    store: StoreWithSpy<*, *, *>,
+    timeout: number | false
   ) {
     this.predicate = predicate;
     this.errorMessage = errorMessage;
     this.store = store;
+    this.timeout = timeout;
 
     this.innerPromise = new Promise((resolve, reject) => {
-      this.resolve = resolve;
-      this.reject = reject;
-      this.store.registerMatcher(this);
+      this._resolve = resolve;
+      this._reject = reject;
+      setTimeout(() => {
+        if (this.timeout !== false) {
+          this.timeoutId = setTimeout(() => this.onTimeout(), this.timeout);
+        }
+        this.store.registerMatcher(this);
+      }, 0);
     });
   }
 
-  test(action: any): void {
-    if (this.predicate(action)) {
-      this.store.unregisterMatcher(this);
-      this.resolve();
-    }
+  resolve() {
+    this.destroy();
+    this._resolve();
   }
 
-  fail(timeout: number): void {
+  reject(e: Error) {
+    this.destroy();
+    this._reject(e);
+  }
+
+  onTimeout() {
     const actions = this.store.actions;
 
     const message = `Expected action ${
       this.errorMessage
-    } to be dispatched to store, but did not happen in ${timeout}ms.
+    } to be dispatched to store, but did not happen in ${(this.timeout: any)}ms.
 
 The following actions got dispatched to the store instead (${actions.length}):
 
 ${printTable(actions)}\n`;
 
     this.reject(new Error(message));
+  }
+
+  destroy(): void {
+    if (this.store) this.store.unregisterMatcher(this);
+    if (this.innerPromise) this.catch(() => undefined);
+    else {
+      console.log("Unregistered innerPromise here");
+    }
+    if (this.timeoutId) clearTimeout(this.timeoutId);
+  }
+
+  test(action: any): void {
+    if (this.predicate(action)) {
+      this.resolve();
+    }
   }
 
   then(
@@ -74,12 +102,13 @@ ${printTable(actions)}\n`;
     otherPredicate: any => boolean,
     otherErrorMessage: string
   ): ActionMatcher {
-    this.store.unregisterMatcher(this);
+    this.destroy();
 
     return new ActionMatcher(
       allPass([this.predicate, otherPredicate]),
       `${this.errorMessage} and ${otherErrorMessage}`,
-      this.store
+      this.store,
+      this.timeout
     );
   }
 
@@ -114,18 +143,22 @@ ${printTable(actions)}\n`;
 }
 
 class EmptyActionMatcher extends ActionMatcher {
-  constructor(store: StoreWithSpy<*, *, *>) {
-    super(() => true, "", store);
+  constructor(store: StoreWithSpy<*, *, *>, timeout: number | false) {
+    super(() => true, "", store, timeout);
   }
 
   and(
     otherPredicate: any => boolean,
     otherErrorMessage: string
   ): ActionMatcher {
-    this.store.unregisterMatcher(this);
-    return new ActionMatcher(otherPredicate, otherErrorMessage, this.store);
+    this.destroy();
+    return new ActionMatcher(
+      otherPredicate,
+      otherErrorMessage,
+      this.store,
+      this.timeout
+    );
   }
 }
 
 export { ActionMatcher };
-

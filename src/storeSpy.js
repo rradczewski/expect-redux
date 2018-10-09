@@ -1,16 +1,19 @@
 // @flow
-import type { Store, StoreEnhancer } from 'redux';
+import type { Store, StoreEnhancer } from "redux";
 import { ActionMatcher } from "./action_matcher";
 
 export type Action = Object;
 export type StoreWithSpy<S, A, D> = Store<S, A, D> & {
-  actions: Array<Action>;
-  timeout: (number) => void;
-  registerMatcher: (ActionMatcher) => void;
-  unregisterMatcher: (ActionMatcher) => void;
-}
+  actions: Array<Action>,
+  registerMatcher: ActionMatcher => void,
+  unregisterMatcher: ActionMatcher => void
+};
 
-const storeEnhancer: StoreEnhancer<*, *, *> = nextCreateStore => (reducer, initialState, enhancer): StoreWithSpy<*, *, *> => {
+const storeEnhancer: StoreEnhancer<*, *, *> = nextCreateStore => (
+  reducer,
+  initialState,
+  enhancer
+): StoreWithSpy<*, *, *> => {
   const actions: Array<Action> = [];
   const matchers = new Set<ActionMatcher>();
 
@@ -21,8 +24,6 @@ const storeEnhancer: StoreEnhancer<*, *, *> = nextCreateStore => (reducer, initi
   };
 
   const store = nextCreateStore(recorder, initialState, enhancer);
-  const timeout = timeoutMs =>
-    matchers.forEach(matcher => matcher.fail(timeoutMs));
 
   const registerMatcher = matcher => {
     actions.forEach(action => matcher.test(action));
@@ -36,7 +37,6 @@ const storeEnhancer: StoreEnhancer<*, *, *> = nextCreateStore => (reducer, initi
   return {
     ...store,
     actions,
-    timeout,
     registerMatcher,
     unregisterMatcher
   };

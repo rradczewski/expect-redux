@@ -1,5 +1,9 @@
 import { propEq } from "ramda";
-import { ActionMatcher, testSymbol, errorMessageSymbol } from "../src/action_matcher";
+import {
+  ActionMatcher,
+  testSymbol,
+  errorMessageSymbol
+} from "../src/action_matcher";
 import {
   registerMatcherSymbol,
   unregisterMatcherSymbol
@@ -56,9 +60,7 @@ describe("matching", () => {
         attrB: "BAR"
       };
       const promise = ActionMatcher.empty(dummyStore).matching(obj);
-      expect(promise.errorMessage).toEqual(
-        `equal to ${JSON.stringify(obj)}`
-      );
+      expect(promise.errorMessage).toEqual(`equal to ${JSON.stringify(obj)}`);
     });
   });
 

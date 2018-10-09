@@ -10,31 +10,26 @@ class NotActionMatcher extends ActionMatcher {
     timeout: number
   ): NotActionMatcher => new EmptyNotActionMatcher(store, timeout);
 
-  timeout: number;
-
   constructor(
     predicate: any => boolean,
     errorMessage: string,
     store: StoreWithSpy<*, *, *>,
     timeout: number
   ) {
-    super(predicate, errorMessage, store);
-    this.timeout = timeout;
+    super(predicate, errorMessage, store, timeout);
+  }
 
-    setTimeout(() => {
-      this.store.unregisterMatcher(this);
-      return this.resolve();
-    }, timeout);
+  onTimeout() {
+    this.resolve();
   }
 
   test(action: any): void {
     if (this.predicate(action)) {
-      this.store.unregisterMatcher(this);
-      this.fail(this.timeout);
+      this.fail();
     }
   }
 
-  fail(timeout: number): void {
+  fail(): void {
     const actions = this.store.actions;
 
     const message = `Expected action ${
@@ -52,14 +47,13 @@ class NotActionMatcher extends ActionMatcher {
     otherPredicate: any => boolean,
     otherErrorMessage: string
   ): NotActionMatcher {
-    this.catch(() => undefined);
-    this.store.unregisterMatcher(this);
+    this.destroy();
 
     return new NotActionMatcher(
       allPass([this.predicate, otherPredicate]),
       `${this.errorMessage} and ${otherErrorMessage}`,
       this.store,
-      this.timeout
+      (this.timeout: any)
     );
   }
 }
@@ -79,10 +73,9 @@ class EmptyNotActionMatcher extends NotActionMatcher {
       otherPredicate,
       otherErrorMessage,
       this.store,
-      this.timeout
+      (this.timeout: any)
     );
   }
 }
 
 export { NotActionMatcher };
-

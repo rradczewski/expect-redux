@@ -4,20 +4,17 @@ import { ActionMatcher } from "./action_matcher";
 import { NotActionMatcher } from "./not_action_matcher";
 import { StateMatcher } from "./state_matcher";
 
-
 const expectRedux = (
   store: StoreWithSpy<*, *, *> & { timeout: number => mixed }
 ) => {
-  if (expectRedux.options.betterErrorMessagesTimeout !== false) {
-    const timeout: number = expectRedux.options.betterErrorMessagesTimeout;
-    setTimeout(() => store.timeout(timeout), timeout);
-  }
+  const timeout = expectRedux.options.betterErrorMessagesTimeout;
 
   return {
     toHaveState: (): StateMatcher => StateMatcher.empty(store),
-    toDispatchAnAction: (): ActionMatcher => ActionMatcher.empty(store),
-    toNotDispatchAnAction: (timeout: number): ActionMatcher =>
-      NotActionMatcher.empty(store, timeout)
+    toDispatchAnAction: (): ActionMatcher =>
+      ActionMatcher.empty(store, timeout),
+    toNotDispatchAnAction: (dispatchTimeout: number): ActionMatcher =>
+      NotActionMatcher.empty(store, dispatchTimeout)
   };
 };
 

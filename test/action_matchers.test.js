@@ -1,4 +1,8 @@
-import { ActionMatcher, testSymbol, errorMessageSymbol } from "../src/action_matcher";
+import {
+  ActionMatcher,
+  testSymbol,
+  errorMessageSymbol
+} from "../src/action_matcher";
 import {
   registerMatcherSymbol,
   unregisterMatcherSymbol
@@ -6,16 +10,20 @@ import {
 import { assertPromiseDidNotResolve } from "./_assertPromiseDidNotResolve";
 
 describe("ActionMatcher", () => {
+  const storeForTest = () => ({
+    registerMatcher: jest.fn(),
+    unregisterMatcher: jest.fn(),
+    actions: []
+  });
+
   it("should unregister a matcher when it matches", () => {
-    const store = {
-      registerMatcher: jest.fn(),
-      unregisterMatcher: jest.fn()
-    };
+    const store = storeForTest();
 
     const matcher = new ActionMatcher(
       action => action.attrA === "attrA",
       "attrA equals attrA",
-      store
+      store,
+      false
     );
 
     matcher.test({ attrA: "attrA" });
@@ -24,23 +32,25 @@ describe("ActionMatcher", () => {
   });
 
   describe("constructor", () => {
-    it("should register the matcher with the store", () => {
-      const store = { registerMatcher: jest.fn() };
-      const matcher = new ActionMatcher(action => true, "woop", store);
-      expect(store.registerMatcher).toHaveBeenCalledWith(matcher);
+    it("should register the matcher with the store", done => {
+      const store = storeForTest();
+      const matcher = new ActionMatcher(action => true, "woop", store, false);
+
+      setTimeout(() => {
+        expect(store.registerMatcher).toHaveBeenCalledWith(matcher);
+        done();
+      }, 0);
     });
   });
 
   describe(".and(ActionMatcher)", () => {
-    const dummyStore = {
-      registerMatcher: () => undefined,
-      unregisterMatcher: () => undefined
-    };
+    const dummyStore = storeForTest();
 
     const matcherA = new ActionMatcher(
       action => action.attrA === "attrA",
       "attrA equals attrA",
-      dummyStore
+      dummyStore,
+      false
     );
     const otherPredicate = action => action.attrB === "attrB";
     const otherErrorMessage = "attrB equals attrB";
@@ -70,7 +80,7 @@ describe("ActionMatcher", () => {
       );
     });
 
-    it("should unregister both matchers and register the new one", () => {
+    it("should unregister both matchers and register the new one", done => {
       const store = {
         registerMatcher: jest.fn(),
         unregisterMatcher: jest.fn()
@@ -79,12 +89,17 @@ describe("ActionMatcher", () => {
       const matcherA = new ActionMatcher(
         action => action.attrA === "attrA",
         "attrA equals attrA",
-        store
+        store,
+        false
       );
 
       const matcherBoth = matcherA.and(otherPredicate, otherErrorMessage);
-      expect(store.registerMatcher).toHaveBeenCalledWith(matcherBoth);
-      expect(store.unregisterMatcher).toHaveBeenCalledWith(matcherA);
+
+      setTimeout(() => {
+        expect(store.registerMatcher).toHaveBeenCalledWith(matcherBoth);
+        expect(store.unregisterMatcher).toHaveBeenCalledWith(matcherA);
+        done();
+      }, 0);
     });
   });
 });
