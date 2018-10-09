@@ -141,7 +141,7 @@ describe("expectRedux(store)", () => {
         expectRedux(store)
           .toHaveState()
           .matching({ foo: "different" })
-          .then(() => done("should not happen"));
+          .then(() => done("should not happen"), () => done());
 
         setTimeout(() => done());
       });

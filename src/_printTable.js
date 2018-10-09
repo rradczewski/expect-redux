@@ -11,7 +11,7 @@ const printTable = actions => {
     sprintf(`\t%${longestMessage + 3}s\t%s`, type, trySerialize(props));
 
   return `${sprintf(`\t%${longestMessage + 3}s\t%s`, "TYPE", "PROPS")}
-  ${actions.map(printAction).join("\n")}`;
+${actions.map(printAction).join("\n")}`;
 };
 
 export { printTable };

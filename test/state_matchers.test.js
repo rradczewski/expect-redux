@@ -1,3 +1,4 @@
+import { storeSpy } from '../src';
 import { createStore } from "redux";
 import { StateMatcher } from "../src/state_matcher";
 
@@ -5,7 +6,7 @@ describe("StateMatcher", () => {
   it("resolves if the state already matches", () => {
     const state = { foo: "before" };
 
-    const store = createStore(state => state, state);
+    const store = createStore(state => state, state, storeSpy);
     const matcher = StateMatcher.empty(store).matching({ foo: "before" });
 
     return matcher;
@@ -19,7 +20,7 @@ describe("StateMatcher", () => {
         return { foo: "after" };
       }
       return state;
-    }, state);
+    }, state, storeSpy);
 
     const matcher = StateMatcher.empty(store).matching({ foo: "after" });
     setTimeout(() => store.dispatch({ type: "BE_AFTER" }), 0);
@@ -35,7 +36,7 @@ describe("StateMatcher", () => {
         return { foo: { bar: "after" } };
       }
       return state;
-    }, state);
+    }, state, storeSpy);
 
     const matcher = StateMatcher.empty(store)
       .withSubtree(state => state.foo)

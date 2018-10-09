@@ -72,6 +72,25 @@ describe("betterErrorMessagesTimeout", () => {
     });
   });
 
+  describe("on state", () => {
+    it("should print the expected and the actual state, plus all dispatched actions", async () => {
+      const store = createStore(identity, { foo: "initial" }, storeSpy);
+
+      store.dispatch({ type: "SOME_ACTION" });
+
+      try {
+        await expectRedux(store)
+          .toHaveState()
+          .withSubtree(state => state.foo)
+          .matching({ foo: "bar" });
+        fail("No error thrown");
+      } catch (e) {
+        expect(e.message).toMatch("SOME_ACTION");
+        expect(e.message).toMatch(JSON.stringify({ foo: "initial" }, undefined, 2));
+      }
+    });
+  });
+
   describe("regressions", () => {
     it("should not fail while serializing circular objects", async () => {
       const actionA = { type: "FOO" };
