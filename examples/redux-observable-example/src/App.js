@@ -48,7 +48,7 @@ class App extends React.Component {
 const mapStateToProps = ({ isLoggedIn, loginError }) => ({ isLoggedIn, loginError });
 const mapDispatchToProps = {
   loginRequest: (user, password) => ({ type: "LOGIN_REQUEST", user, password }),
-  logout: () => ({ type: "DO_LOGOUT" })
+  logout: () => ({ type: "LOGOUT" })
 };
 
 export default connect(

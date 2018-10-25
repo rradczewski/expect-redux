@@ -84,8 +84,8 @@ describe("App Component", () => {
 
       await expectRedux(store)
         .toDispatchAnAction()
-        .ofType("LOGGED_OUT");
-
+        .ofType("LOGOUT");
+      
       expect(component.text()).toContain("Please login below");
     });
   });

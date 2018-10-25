@@ -13,7 +13,7 @@ const reducer = (
   if (action.type === "LOGIN_ERROR") {
     return { ...state, loginError: action.error };
   }
-  if (action.type === "LOGGED_OUT") {
+  if (action.type === "LOGOUT") {
     return { isLoggedIn: false, loginError: undefined };
   }
   return state;

@@ -1,6 +1,6 @@
 import { combineEpics, ofType } from "redux-observable";
 import { of, from } from "rxjs";
-import { map, catchError, mergeMap, mapTo, tap } from "rxjs/operators";
+import { map, ignoreElements, catchError, mergeMap, mapTo, tap } from "rxjs/operators";
 import Api from "./Api";
 
 const loginEpic = action$ =>
@@ -19,9 +19,9 @@ const loginEpic = action$ =>
 
 const logoutEpic = action$ =>
   action$.pipe(
-    ofType("DO_LOGOUT"),
+    ofType("LOGOUT"),
     tap(() => Api.clearItem("token")),
-    mapTo({ type: "LOGGED_OUT" })
+    ignoreElements()
   );
 
 export const authEpics = combineEpics(loginEpic, logoutEpic);
