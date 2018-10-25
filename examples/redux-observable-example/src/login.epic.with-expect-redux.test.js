@@ -50,6 +50,11 @@ describe("loginFlow", () => {
     });
 
     it("logs out the user when they issue a LOGOUT action", async () => {
+      // This test only works because the call to Api.clearItem is synchronous
+      // and happens right after the epic$ has run.
+      // If it were asynchronous, we would need to wait for the LOGOUT to
+      // happen, e.g. by dispatching a 'LOGOUT_SUCCESS' action
+      
       /// GIVEN - a successfully logged in user
       const store = configureStore([storeSpy]);
       store.dispatch({
@@ -65,10 +70,6 @@ describe("loginFlow", () => {
       /// WHEN - they log out
       store.dispatch({ type: "LOGOUT" });
 
-/*      await expectRedux(store)
-        .toDispatchAnAction()
-        .ofType("LOGGED_OUT");
-*/
       /// THEN - the storage is cleared
       expect(Api.clearItem).toHaveBeenCalledWith("token");
     });

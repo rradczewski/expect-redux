@@ -62,6 +62,10 @@ describe("loginFlow", () => {
         user: "MY_USER",
         password: "MY_PASSWORD"
       });
+      
+      await expectRedux(store)
+        .toDispatchAnAction()
+        .ofType("LOGIN_SUCCESS");
 
       /// WHEN - they log out
       store.dispatch({ type: "LOGOUT" });
