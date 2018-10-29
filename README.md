@@ -166,5 +166,6 @@ expectRedux(store)
 ## Similar or related libraries
 
 - [chai-redux](https://github.com/ScaCap/chai-redux) - a very similar assertion library with a `chai`-like DSL and timing-based assertions (first this action, then that action)
+- [redux-saga-test-plan](https://github.com/jfairbank/redux-saga-test-plan) - a testing framework similar to expect-redux, but tied closely to redux-saga
 - [redux-action-assertions](https://github.com/dmitry-zaets/redux-actions-assertions)
 - [redux-mock-store](https://github.com/arnaudbenard/redux-mock-store)
