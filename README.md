@@ -32,7 +32,7 @@ A first version of `expect-redux` was developed for use in our projects at [@Vaa
 ## Installation
 
 ```sh
-npm install --save-dev expect-redux@next
+npm install --save-dev expect-redux
 ```
 
 ## Usage
