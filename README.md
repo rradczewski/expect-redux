@@ -1,4 +1,4 @@
-![Logo](docs/logo.svg)
+![Logo](https://raw.githubusercontent.com/rradczewski/expect-redux/HEAD/docs/logo.svg?sanitize=true)
 
 [![npm version](https://badge.fury.io/js/expect-redux.svg)](https://badge.fury.io/js/expect-redux)
 [![CI](https://travis-ci.org/rradczewski/expect-redux.svg)](https://travis-ci.org/rradczewski/expect-redux)
