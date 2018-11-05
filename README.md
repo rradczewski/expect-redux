@@ -6,7 +6,7 @@
 
 # expect-redux - better interaction testing for redux
 
-`expect-redux` is a testing library that enables you to write tests that verify the behavior of your business logic, no matter if you are using `redux-saga`, `redux-observable` or just `redux-thunk`. It provides a fluent DSL that makes writing tests with asynchronousness in mind a lot easier.
+`expect-redux` is a testing library that enables you to write tests that verify the behavior of your business logic, no matter if you are using `redux-saga`, `redux-observable` or just `redux-thunk`. It provides a fluent DSL that makes writing tests with asynchronousness in mind a lot easier. 
 
 Here's a simple example to give you an idea:
 
@@ -25,7 +25,7 @@ it("should dispatch SUCCESSFULLY_CALLED on success", () => {
 
 It doesn't matter if the action is dispatched asynchronously or even if it already was dispatched when you call `expectRedux(store)...`, `expect-redux` records all previously dispatched actions as well as every action that will be dispatched.
 
-See [`/examples`](examples/) for some example projects using different side-effect libraries that are tested with `expect-redux`.
+See [`/examples`](examples/) for some example projects using different side-effect libraries that are tested with `expect-redux`, or checkout [this blogpost](https://ymmv.craftswerk.io/2018/11/expect-redux-better-interaction-tests-with-redux) where I compare testing strategies for several side-effect libraries and explain how `expect-redux` helps you to put them under test.
 
 A first version of `expect-redux` was developed for use in our projects at [@VaamoTech](https://twitter.com/VaamoTech) for [Vaamo](https://vaamo.de).
 
