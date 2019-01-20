@@ -2,8 +2,8 @@
 
 Object.defineProperty(exports, '__esModule', { value: true });
 
-var sprintfJs = require('sprintf-js');
 var ramda = require('ramda');
+var sprintfJs = require('sprintf-js');
 
 function _classCallCheck(instance, Constructor) {
   if (!(instance instanceof Constructor)) {

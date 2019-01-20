@@ -1,5 +1,5 @@
+import { allPass, propEq, equals, pipe } from 'ramda';
 import { sprintf } from 'sprintf-js';
-import { allPass, equals, propEq, pipe } from 'ramda';
 
 function _classCallCheck(instance, Constructor) {
   if (!(instance instanceof Constructor)) {
