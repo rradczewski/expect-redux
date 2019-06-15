@@ -3,17 +3,19 @@ const { configureStore } = require("./store");
 
 const storeForTest = () => configureStore([storeSpy]);
 
-const effect = async dispatch => {
+const effect = dispatch => {
   dispatch({ type: "REQUEST_STARTED" });
 
-  const result = await fetch("/api/count");
-
-  if (result.ok) {
-    dispatch({
-      type: "REQUEST_SUCCESS",
-      payload: (await result.json()).count
-    });
-  }
+  return fetch("/api/count").then(result => {
+    if (result.ok) {
+      return result.json().then(jsonBody => {
+        dispatch({
+          type: "REQUEST_SUCCESS",
+          payload: jsonBody.count
+        });
+      });
+    }
+  });
 };
 
 describe("service", () => {
