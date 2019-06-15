@@ -336,7 +336,7 @@ Expectation:
 ${this.errorMessage}
 
 Actual state:
-${JSON.stringify(this.store.getState(), undefined, 2)}
+${JSON.stringify(this.store.getState(), undefined, 2) || ""}
 
 The following actions got dispatched to the store (${actions.length}):
 
@@ -352,7 +352,7 @@ ${printTable(actions)}\n`;
 
   matching(expectedState) {
     this.destroy();
-    return new StateMatcher(ramda.equals(expectedState), `equaling ${JSON.stringify(expectedState)}`, this.store, this.timeout);
+    return new StateMatcher(ramda.equals(expectedState), `equaling ${JSON.stringify(expectedState) || ""}`, this.store, this.timeout);
   }
 
   withSubtree(selector) {
@@ -387,7 +387,7 @@ class SelectingStateMatcher extends StateMatcher {
 
   matching(expectedState) {
     this.destroy();
-    return new SelectingStateMatcher(this.selector, ramda.equals(expectedState), `substate equaling ${JSON.stringify(expectedState)}`, this.store, this.timeout);
+    return new SelectingStateMatcher(this.selector, ramda.equals(expectedState), `substate equaling ${JSON.stringify(expectedState) || ""}`, this.store, this.timeout);
   }
 
   withSubtree(selector) {

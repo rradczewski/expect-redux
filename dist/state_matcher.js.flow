@@ -73,7 +73,7 @@ Expectation:
 ${this.errorMessage}
 
 Actual state:
-${JSON.stringify(this.store.getState(), undefined, 2)}
+${JSON.stringify(this.store.getState(), undefined, 2) || ""}
 
 The following actions got dispatched to the store (${actions.length}):
 
@@ -92,7 +92,7 @@ ${printTable(actions)}\n`;
     this.destroy();
     return new StateMatcher(
       equals(expectedState),
-      `equaling ${JSON.stringify(expectedState)}`,
+      `equaling ${JSON.stringify(expectedState) || ""}`,
       this.store,
       this.timeout
     );
@@ -144,7 +144,7 @@ class SelectingStateMatcher extends StateMatcher {
     return new SelectingStateMatcher(
       this.selector,
       equals(expectedState),
-      `substate equaling ${JSON.stringify(expectedState)}`,
+      `substate equaling ${JSON.stringify(expectedState) || ""}`,
       this.store,
       this.timeout
     );
