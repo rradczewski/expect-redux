@@ -8,5 +8,6 @@ install:
 
 script:
   - npm test
+  - npm prune --production
   - (cd examples/redux-thunk-example && npm test)
   - (cd examples/redux-saga-example && npm test)
