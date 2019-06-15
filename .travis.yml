@@ -1,17 +1,26 @@
 language: node_js
 
+cache:
+  npm: true
+  directories:
+  - node_modules
+  - examples/async-effects-example/node_modules
+  - examples/redux-observable-example/node_modules
+  - examples/redux-saga-example/node_modules
+  - examples/redux-thunk-example/node_modules
+
 install:
   - npm install
   - npm run build
   - (cd examples/async-effects-example && npm install)
   - (cd examples/redux-observable-example && npm install)
-  - (cd examples/redux-thunk-example && npm install)
   - (cd examples/redux-saga-example && npm install)
+  - (cd examples/redux-thunk-example && npm install)
 
 script:
   - npm test
   - npm prune --production
   - (cd examples/async-effects-example && npm test)
   - (cd examples/redux-observable-example && npm test)
-  - (cd examples/redux-thunk-example && npm test)
   - (cd examples/redux-saga-example && npm test)
+  - (cd examples/redux-thunk-example && npm test)
