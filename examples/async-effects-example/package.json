@@ -20,7 +20,7 @@
   "devDependencies": {
     "babel-core": "^7.0.0-bridge.0",
     "expect-redux": "file:../../",
-    "jest": "^23.6.0",
+    "jest": "^24.8.0",
     "merge": "^1.2.1"
   }
 }

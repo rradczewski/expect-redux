@@ -1,4 +1,5 @@
 import React from "react";
+import { act } from "react-dom/test-utils";
 import { mount } from "enzyme";
 import { expectRedux, storeSpy } from "expect-redux";
 
@@ -18,21 +19,25 @@ describe("App Component", () => {
   });
 
   const fillInUserName = value =>
-    component.find("#username").simulate("change", { target: { value } });
+    act(async () =>
+      component.find("#username").simulate("change", { target: { value } })
+    );
 
   const fillInPassword = value =>
-    component.find("#password").simulate("change", { target: { value } });
+    act(async () =>
+      component.find("#password").simulate("change", { target: { value } })
+    );
 
   const submitForm = () =>
-    component.find("#login").simulate("click", { button: 0 });
+    act(async () => component.find("#login").simulate("click", { button: 0 }));
 
   describe("logging in", () => {
     it("will work with correct credentials", async () => {
       Api.authorize.mockResolvedValue("SOME_TOKEN");
 
-      fillInUserName("MY_USER");
-      fillInPassword("MY_PASSWORD");
-      submitForm();
+      await fillInUserName("MY_USER");
+      await fillInPassword("MY_PASSWORD");
+      await submitForm();
 
       await expectRedux(store)
         .toDispatchAnAction()
@@ -52,9 +57,9 @@ describe("App Component", () => {
     it("won't work if you supply bad credentials", async () => {
       Api.authorize.mockRejectedValue("INVALID CREDENTIALS");
 
-      fillInUserName("MY_USER");
-      fillInPassword("MY_WRONG_PASSWORD");
-      submitForm();
+      await fillInUserName("MY_USER");
+      await fillInPassword("MY_WRONG_PASSWORD");
+      await submitForm();
 
       await expectRedux(store)
         .toDispatchAnAction()
@@ -68,9 +73,9 @@ describe("App Component", () => {
     beforeEach(async () => {
       Api.authorize.mockResolvedValue("SOME_TOKEN");
 
-      fillInUserName("MY_USER");
-      fillInPassword("MY_PASSWORD");
-      submitForm();
+      await fillInUserName("MY_USER");
+      await fillInPassword("MY_PASSWORD");
+      await submitForm();
 
       await expectRedux(store)
         .toDispatchAnAction()
@@ -80,12 +85,14 @@ describe("App Component", () => {
     });
 
     it("works when logged in", async () => {
-      component.find("#logout").simulate("click", { button: 0 });
+      act(() => {
+        component.find("#logout").simulate("click", { button: 0 });
+      });
 
       await expectRedux(store)
         .toDispatchAnAction()
         .ofType("LOGOUT");
-      
+
       expect(component.text()).toContain("Please login below");
     });
   });
