@@ -1,19 +1,18 @@
-// @flow
-import type { Store, StoreEnhancer } from "redux";
+import { Action, Store, StoreEnhancer } from "redux";
 import { ActionMatcher } from "./action_matcher";
 
-export type Action = Object;
-export type StoreWithSpy<S, A, D> = Store<S, A, D> & {
-  actions: Array<Action>,
-  registerMatcher: ActionMatcher => void,
-  unregisterMatcher: ActionMatcher => void
+type SpyExtension = {
+  actions: Array<Action>;
+  registerMatcher: (matcher: ActionMatcher) => void;
+  unregisterMatcher: (matcher: ActionMatcher) => void;
 };
 
-const storeEnhancer: StoreEnhancer<*, *, *> = nextCreateStore => (
+export type StoreWithSpy<S, A extends Action<any>> = Store<S, A> & SpyExtension;
+
+const storeEnhancer: StoreEnhancer<SpyExtension, {}> = nextCreateStore => (
   reducer,
-  initialState,
-  enhancer
-): StoreWithSpy<*, *, *> => {
+  initialState
+) => {
   const actions: Array<Action> = [];
   const matchers = new Set<ActionMatcher>();
 
@@ -23,7 +22,7 @@ const storeEnhancer: StoreEnhancer<*, *, *> = nextCreateStore => (
     return reducer(state, action);
   };
 
-  const store = nextCreateStore(recorder, initialState, enhancer);
+  const store = nextCreateStore(recorder, initialState);
 
   const registerMatcher = matcher => {
     actions.forEach(action => matcher.test(action));

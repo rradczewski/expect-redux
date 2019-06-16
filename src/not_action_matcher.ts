@@ -1,19 +1,18 @@
-// @flow
 import { allPass } from "ramda";
 import { ActionMatcher } from "./action_matcher";
+import { StoreWithSpy } from "./storeSpy";
 import { printTable } from "./_printTable";
-import type { StoreWithSpy } from "./storeSpy";
 
 class NotActionMatcher extends ActionMatcher {
   static empty: (...args: any) => ActionMatcher = (
-    store: StoreWithSpy<*, *, *>,
+    store: StoreWithSpy<any, any>,
     timeout: number
   ): NotActionMatcher => new EmptyNotActionMatcher(store, timeout);
 
   constructor(
-    predicate: any => boolean,
+    predicate: (action: any) => boolean,
     errorMessage: string,
-    store: StoreWithSpy<*, *, *>,
+    store: StoreWithSpy<any, any>,
     timeout: number
   ) {
     super(predicate, errorMessage, store, timeout);
@@ -44,7 +43,7 @@ class NotActionMatcher extends ActionMatcher {
   }
 
   and(
-    otherPredicate: any => boolean,
+    otherPredicate: (action: any) => boolean,
     otherErrorMessage: string
   ): NotActionMatcher {
     this.destroy();
@@ -53,29 +52,27 @@ class NotActionMatcher extends ActionMatcher {
       allPass([this.predicate, otherPredicate]),
       `${this.errorMessage} and ${otherErrorMessage}`,
       this.store,
-      (this.timeout: any)
+      <any>this.timeout
     );
   }
 }
 
 class EmptyNotActionMatcher extends NotActionMatcher {
-  constructor(store: StoreWithSpy<*, *, *>, timeout: number) {
+  constructor(store: StoreWithSpy<any, any>, timeout: number) {
     super(() => false, "", store, timeout);
   }
 
   and(
-    otherPredicate: any => boolean,
+    otherPredicate: (action: any) => boolean,
     otherErrorMessage: string
   ): NotActionMatcher {
     this.store.unregisterMatcher(this);
 
-    return new NotActionMatcher(
-      otherPredicate,
-      otherErrorMessage,
-      this.store,
-      (this.timeout: any)
-    );
+    return new NotActionMatcher(otherPredicate, otherErrorMessage, this.store, <
+      any
+    >this.timeout);
   }
 }
 
 export { NotActionMatcher };
+

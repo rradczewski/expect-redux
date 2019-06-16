@@ -1,6 +1,6 @@
-import { createStore } from "redux";
-import { storeSpy, expectRedux } from "../src";
 import { identity } from "ramda";
+import { createStore } from "redux";
+import { expectRedux, storeSpy } from "../src";
 
 describe("betterErrorMessagesTimeout", () => {
   beforeEach(() => {
@@ -40,7 +40,7 @@ describe("betterErrorMessagesTimeout", () => {
 
       try {
         await expectRedux(store)
-          .toNotDispatchAnAction()
+          .toNotDispatchAnAction(10)
           .ofType("bar");
         fail("No error thrown");
       } catch (e) {
@@ -81,19 +81,21 @@ describe("betterErrorMessagesTimeout", () => {
       try {
         await expectRedux(store)
           .toHaveState()
-          .withSubtree(state => state.foo)
+          .withSubtree((state: any) => state.foo)
           .matching({ foo: "bar" });
         fail("No error thrown");
       } catch (e) {
         expect(e.message).toMatch("SOME_ACTION");
-        expect(e.message).toMatch(JSON.stringify({ foo: "initial" }, undefined, 2));
+        expect(e.message).toMatch(
+          JSON.stringify({ foo: "initial" }, undefined, 2)
+        );
       }
     });
   });
 
   describe("regressions", () => {
     it("should not fail while serializing circular objects", async () => {
-      const actionA = { type: "FOO" };
+      const actionA: any = { type: "FOO" };
       actionA.foo = actionA;
 
       const store = createStore(identity, {}, storeSpy);

@@ -4,7 +4,7 @@ export const assertPromiseDidNotResolve = promise => {
     isDone = true;
   });
 
-  return Promise.resolve().then(
-    () => (isDone ? Promise.reject("Promise was resolved") : Promise.resolve())
+  return Promise.resolve().then(() =>
+    isDone ? Promise.reject("Promise was resolved") : Promise.resolve()
   );
 };

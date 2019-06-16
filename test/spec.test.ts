@@ -1,6 +1,6 @@
-import { createStore } from "redux";
-import { storeSpy, expectRedux } from "../src/";
 import { identity } from "ramda";
+import { createStore } from "redux";
+import { expectRedux, storeSpy } from "../src/";
 
 describe("expectRedux(store)", () => {
   const storeFactory = (reducer = identity, initialState = {}) =>
@@ -153,17 +153,17 @@ describe("expectRedux(store)", () => {
 
         return expectRedux(store)
           .toHaveState()
-          .withSubtree(state => state.foo)
+          .withSubtree((state: any) => state.foo)
           .matching({ bar: "value" });
       });
 
-      it("should be composable", () => {
+      it("should be composabl", () => {
         const store = storeFactory(undefined, { foo: { bar: "value" } });
 
         return expectRedux(store)
           .toHaveState()
-          .withSubtree(state => state.foo)
-          .withSubtree(foo => foo.bar)
+          .withSubtree((state: any) => state.foo)
+          .withSubtree((foo: any) => foo.bar)
           .matching("value");
       });
     });

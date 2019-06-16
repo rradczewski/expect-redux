@@ -1,32 +1,29 @@
-// @flow
 import { equals, pipe } from "ramda";
+import { StoreWithSpy } from "./storeSpy";
 import { printTable } from "./_printTable";
-import { trySerialize } from "./_trySerialize";
-
-import type { PromiseLike } from "./_promiseLike";
-import type { StoreWithSpy } from "./storeSpy";
+import { PromiseLike } from "./_promiseLike";
 
 class StateMatcher implements PromiseLike {
   static empty: (...args: any) => StateMatcher = (
-    store: StoreWithSpy<*, *, *>,
+    store: StoreWithSpy<any, any>,
     timeout: number | false
   ) => new StateMatcher(() => true, "", store, timeout);
 
-  store: StoreWithSpy<*, *, *>;
-  predicate: mixed => boolean;
+  store: StoreWithSpy<any, any>;
+  predicate: (state: unknown) => boolean;
   errorMessage: string;
   timeout: number | false;
-  timeoutId: ?any;
+  timeoutId: any;
 
-  innerPromise: Promise<*>;
+  innerPromise: Promise<any>;
   _resolve: Function;
   _reject: Function;
   unsubscribe: Function;
 
   constructor(
-    predicate: mixed => boolean,
+    predicate: (state: unknown) => boolean,
     errorMessage: string,
-    store: StoreWithSpy<*, *, *>,
+    store: StoreWithSpy<any, any>,
     timeout: number | false
   ) {
     this.predicate = predicate;
@@ -88,7 +85,7 @@ ${printTable(actions)}\n`;
     }
   }
 
-  matching(expectedState: mixed): StateMatcher {
+  matching(expectedState: unknown): StateMatcher {
     this.destroy();
     return new StateMatcher(
       equals(expectedState),
@@ -98,19 +95,19 @@ ${printTable(actions)}\n`;
     );
   }
 
-  withSubtree(selector: Object => mixed): StateMatcher {
+  withSubtree(selector: (state: any) => unknown): StateMatcher {
     this.destroy();
     return SelectingStateMatcher.empty(selector, this.store);
   }
 
   then(
-    onFulfill?: (result: any) => PromiseLike | mixed,
-    onReject?: (error: any) => PromiseLike | mixed
+    onFulfill?: (result: any) => PromiseLike | unknown,
+    onReject?: (error: any) => PromiseLike | unknown
   ) {
     return this.innerPromise.then(onFulfill, onReject);
   }
 
-  catch(onReject: (error: any) => PromiseLike | mixed) {
+  catch(onReject: (error: any) => PromiseLike | unknown) {
     return this.innerPromise.catch(onReject);
   }
 
@@ -121,25 +118,25 @@ ${printTable(actions)}\n`;
 
 class SelectingStateMatcher extends StateMatcher {
   static empty: (...args: any) => StateMatcher = (
-    selector: Object => Object,
-    store: StoreWithSpy<*, *, *>,
+    selector: (state: Object) => Object,
+    store: StoreWithSpy<any, any>,
     timeout: number | false
   ) => new SelectingStateMatcher(selector, () => true, "", store, timeout);
 
-  selector: Object => mixed;
+  selector: (state: Object) => unknown;
 
   constructor(
-    selector: Object => mixed,
-    predicate: mixed => boolean,
+    selector: (state: Object) => unknown,
+    predicate: (state: unknown) => boolean,
     errorMessage: string,
-    store: StoreWithSpy<*, *, *>,
+    store: StoreWithSpy<any, any>,
     timeout: number | false
   ) {
     super(predicate, errorMessage, store, timeout);
     this.selector = selector;
   }
 
-  matching(expectedState: mixed): StateMatcher {
+  matching(expectedState: unknown): StateMatcher {
     this.destroy();
     return new SelectingStateMatcher(
       this.selector,
@@ -150,7 +147,7 @@ class SelectingStateMatcher extends StateMatcher {
     );
   }
 
-  withSubtree(selector: Object => mixed): StateMatcher {
+  withSubtree(selector: (state: Object) => unknown): StateMatcher {
     this.destroy();
     return SelectingStateMatcher.empty(
       pipe(

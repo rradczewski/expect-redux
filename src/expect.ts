@@ -1,12 +1,9 @@
-// @flow
-import type { StoreWithSpy } from "./storeSpy";
 import { ActionMatcher } from "./action_matcher";
 import { NotActionMatcher } from "./not_action_matcher";
 import { StateMatcher } from "./state_matcher";
+import { StoreWithSpy } from "./storeSpy";
 
-const expectRedux = (
-  store: StoreWithSpy<*, *, *> & { timeout: number => mixed }
-) => {
+const expectRedux = (store: StoreWithSpy<any, any>) => {
   const timeout = expectRedux.options.betterErrorMessagesTimeout;
 
   return {
@@ -19,7 +16,7 @@ const expectRedux = (
 };
 
 type BetterErrorMessagesOptions = {
-  timeout: number
+  timeout: number;
 };
 
 /* Deprecated, use expectRedux.configure */
@@ -31,14 +28,16 @@ expectRedux.enableBetterErrorMessages = (
   );
   expectRedux.configure({
     betterErrorMessagesTimeout:
-      typeof options.timeout === "number" ? options.timeout : false
+      typeof options === "boolean"
+        ? false
+        : (<BetterErrorMessagesOptions>options).timeout
   });
 };
 
 type Options = {
-  betterErrorMessagesTimeout: number | false
+  betterErrorMessagesTimeout: number | false;
 };
-expectRedux.options = { betterErrorMessagesTimeout: false };
+expectRedux.options = <Options>{ betterErrorMessagesTimeout: false };
 
 expectRedux.configure = (options: Options) =>
   (expectRedux.options = { ...expectRedux.options, ...options });

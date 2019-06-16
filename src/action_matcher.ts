@@ -1,30 +1,28 @@
-// @flow
 import { allPass, equals, propEq } from "ramda";
+import { StoreWithSpy } from "./storeSpy";
 import { printTable } from "./_printTable";
+import { PromiseLike } from "./_promiseLike";
 import { trySerialize } from "./_trySerialize";
 
-import type { PromiseLike } from "./_promiseLike";
-import type { StoreWithSpy } from "./storeSpy";
-
 class ActionMatcher implements PromiseLike {
-  innerPromise: Promise<*>;
-  store: StoreWithSpy<*, *, *>;
+  innerPromise: Promise<any>;
+  store: StoreWithSpy<any, any>;
   _resolve: Function;
   _reject: Function;
   errorMessage: string;
-  predicate: any => boolean;
+  predicate: (action: any) => boolean;
   timeout: number | false;
-  timeoutId: ?any;
+  timeoutId: any;
 
   static empty: (...args: any) => ActionMatcher = (
-    store: StoreWithSpy<*, *, *>,
+    store: StoreWithSpy<any, any>,
     timeout: number | false
   ) => new EmptyActionMatcher(store, timeout);
 
   constructor(
-    predicate: any => boolean,
+    predicate: (action: any) => boolean,
     errorMessage: string,
-    store: StoreWithSpy<*, *, *>,
+    store: StoreWithSpy<any, any>,
     timeout: number | false
   ) {
     this.predicate = predicate;
@@ -59,7 +57,7 @@ class ActionMatcher implements PromiseLike {
 
     const message = `Expected action ${
       this.errorMessage
-    } to be dispatched to store, but did not happen in ${(this.timeout: any)}ms.
+    } to be dispatched to store, but did not happen in ${this.timeout}ms.
 
 The following actions got dispatched to the store instead (${actions.length}):
 
@@ -69,7 +67,7 @@ ${printTable(actions)}\n`;
   }
 
   destroy(): void {
-    if (this.store) this.store.unregisterMatcher(this);
+    this.store.unregisterMatcher(this);
     if (this.innerPromise) this.catch(() => undefined);
     else {
       console.log("Unregistered innerPromise here");
@@ -84,13 +82,13 @@ ${printTable(actions)}\n`;
   }
 
   then(
-    onFulfill?: (result: any) => PromiseLike | mixed,
-    onReject?: (error: any) => PromiseLike | mixed
+    onFulfill?: (result: any) => PromiseLike | unknown,
+    onReject?: (error: any) => PromiseLike | unknown
   ) {
     return this.innerPromise.then(onFulfill, onReject);
   }
 
-  catch(onReject: (error: any) => PromiseLike | mixed) {
+  catch(onReject: (error: any) => PromiseLike | unknown) {
     return this.innerPromise.catch(onReject);
   }
 
@@ -99,7 +97,7 @@ ${printTable(actions)}\n`;
   }
 
   and(
-    otherPredicate: any => boolean,
+    otherPredicate: (action: any) => boolean,
     otherErrorMessage: string
   ): ActionMatcher {
     this.destroy();
@@ -116,10 +114,12 @@ ${printTable(actions)}\n`;
     return this.and(propEq("type", type), `of type '${type}'`);
   }
 
-  matching(objectOrPredicate: Object | (any => boolean)): ActionMatcher {
+  matching(
+    objectOrPredicate: Object | ((action: any) => boolean)
+  ): ActionMatcher {
     if (typeof objectOrPredicate === "function") {
       return this.and(
-        objectOrPredicate,
+        <(action: any) => boolean>objectOrPredicate,
         `passing predicate '${objectOrPredicate.toString()}'`
       );
     } else {
@@ -130,7 +130,7 @@ ${printTable(actions)}\n`;
     }
   }
 
-  asserting(assertion: any => any): ActionMatcher {
+  asserting(assertion: (action: any) => any): ActionMatcher {
     return this.and(action => {
       try {
         assertion(action);
@@ -143,12 +143,12 @@ ${printTable(actions)}\n`;
 }
 
 class EmptyActionMatcher extends ActionMatcher {
-  constructor(store: StoreWithSpy<*, *, *>, timeout: number | false) {
+  constructor(store: StoreWithSpy<any, any>, timeout: number | false) {
     super(() => true, "", store, timeout);
   }
 
   and(
-    otherPredicate: any => boolean,
+    otherPredicate: (action: any) => boolean,
     otherErrorMessage: string
   ): ActionMatcher {
     this.destroy();
@@ -162,3 +162,4 @@ class EmptyActionMatcher extends ActionMatcher {
 }
 
 export { ActionMatcher };
+

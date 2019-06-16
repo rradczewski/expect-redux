@@ -1,20 +1,13 @@
-import {
-  ActionMatcher,
-  testSymbol,
-  errorMessageSymbol
-} from "../src/action_matcher";
-import {
-  registerMatcherSymbol,
-  unregisterMatcherSymbol
-} from "../src/storeSpy";
+import { ActionMatcher } from "../src/action_matcher";
+import { StoreWithSpy } from "../src/storeSpy";
 import { assertPromiseDidNotResolve } from "./_assertPromiseDidNotResolve";
 
 describe("ActionMatcher", () => {
-  const storeForTest = () => ({
-    registerMatcher: jest.fn(),
-    unregisterMatcher: jest.fn(),
-    actions: []
-  });
+  const storeForTest = () => <StoreWithSpy<any, any>>(<unknown>{
+      registerMatcher: jest.fn(),
+      unregisterMatcher: jest.fn(),
+      actions: []
+    });
 
   it("should unregister a matcher when it matches", () => {
     const store = storeForTest();
@@ -81,10 +74,10 @@ describe("ActionMatcher", () => {
     });
 
     it("should unregister both matchers and register the new one", done => {
-      const store = {
+      const store = <StoreWithSpy<any, any>>(<unknown>{
         registerMatcher: jest.fn(),
         unregisterMatcher: jest.fn()
-      };
+      });
 
       const matcherA = new ActionMatcher(
         action => action.attrA === "attrA",

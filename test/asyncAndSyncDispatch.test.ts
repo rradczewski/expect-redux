@@ -1,7 +1,7 @@
-import { createStore } from "redux";
-import { storeSpy, expectRedux } from "../src/";
-
 import { identity, propEq } from "ramda";
+import { createStore } from "redux";
+import { expectRedux, storeSpy } from "../src/";
+
 
 const testPreviouslyDispatchedAction = (action, fun) =>
   it("on previously dispatched actions", done => {

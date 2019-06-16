@@ -15,3 +15,4 @@ ${actions.map(printAction).join("\n")}`;
 };
 
 export { printTable };
+
