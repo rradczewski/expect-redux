@@ -1,18 +1,18 @@
 {
   "name": "expect-redux",
-  "version": "4.0.5",
+  "version": "5.0.0-0",
   "description": "Async expect matchers for redux",
   "main": "dist/index.js",
-  "module": "dist/expect-redux.esm.js",
+  "types": "dist/index.d.ts",
   "scripts": {
-    "build": "npm-run-all -s test flow build:clean build:js build:flow",
-    "build:js": "rollup -c",
+    "build": "run-s test build:clean build:js prune examples:install examples:test",
+    "build:js": "tsc",
     "build:clean": "rimraf dist",
     "build:flow": "flow-copy-source -v src dist",
-    "watch:build": "rollup -c -w",
-    "watch:flow": "nodemon -w src --exec yarn flow -- check",
-    "flow": "flow",
+    "prune": "npm prune --production",
     "test": "jest",
+    "examples:install": "set -o errexit; for i in $(ls examples/); do (cd examples/$i; npm install); done",
+    "examples:test": "set -o errexit; for i in $(ls examples/); do (cd examples/$i; npm test); done",
     "preversion": "npm test",
     "version": "npm run build && git add -Af dist",
     "postversion": "git push origin && git push origin --tags"
@@ -35,32 +35,26 @@
     "url": "https://github.com/rradczewski/expect-redux/issues"
   },
   "jest": {
+    "preset": "ts-jest/presets/js-with-ts",
+    "testEnvironment": "node",
     "testPathIgnorePatterns": [
       "/node_modules/",
-      "/examples/"
+      "/examples/",
+      "/dist"
     ],
     "testURL": "http://localhost"
   },
   "homepage": "https://github.com/rradczewski/expect-redux#readme",
   "devDependencies": {
-    "@babel/core": "^7.4.5",
-    "@babel/plugin-proposal-class-properties": "^7.4.4",
-    "@babel/plugin-proposal-object-rest-spread": "^7.4.4",
-    "@babel/plugin-syntax-flow": "^7.2.0",
-    "@babel/preset-env": "^7.4.5",
-    "@babel/preset-flow": "^7.0.0",
-    "babel-jest": "^24.8.0",
-    "flow-bin": "^0.101.0",
-    "flow-copy-source": "^2.0.6",
+    "@types/jest": "^24.0.15",
+    "@types/ramda": "^0.26.15",
     "jest": "^24.8.0",
     "nodemon": "^1.19.1",
     "npm-run-all": "^4.1.5",
-    "redux": "^4.0.1",
+    "redux": "^4.0.4",
     "rimraf": "^2.6.3",
-    "rollup": "^1.14.0",
-    "rollup-plugin-babel": "^4.3.2",
-    "rollup-plugin-commonjs": "^10.0.0",
-    "rollup-plugin-node-resolve": "^5.0.1"
+    "ts-jest": "^24.0.2",
+    "typescript": "^3.5.3"
   },
   "dependencies": {
     "ramda": "^0.26.1",
