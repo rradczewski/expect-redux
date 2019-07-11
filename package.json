@@ -5,11 +5,14 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "npm-run-all -s test build:clean build:js",
+    "build": "run-s test build:clean build:js prune examples:install examples:test",
     "build:js": "tsc",
     "build:clean": "rimraf dist",
     "build:flow": "flow-copy-source -v src dist",
+    "prune": "npm prune --production",
     "test": "jest",
+    "examples:install": "set -o errexit; set -o posix; for i in $(ls examples/); do (cd examples/$i; npm install); done",
+    "examples:test": "set -o errexit; set -o posix; for i in $(ls examples/); do (cd examples/$i; npm test); done",
     "preversion": "npm test",
     "version": "npm run build && git add -Af dist",
     "postversion": "git push origin && git push origin --tags"
