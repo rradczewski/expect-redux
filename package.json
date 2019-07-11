@@ -1,6 +1,6 @@
 {
   "name": "expect-redux",
-  "version": "4.0.5",
+  "version": "5.0.0-0",
   "description": "Async expect matchers for redux",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
