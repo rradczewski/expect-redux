@@ -1,16 +1,7 @@
 language: node_js
 
-cache:
-  npm: true
-  directories:
-  - node_modules
-  - examples/async-effects-example/node_modules
-  - examples/redux-observable-example/node_modules
-  - examples/redux-saga-example/node_modules
-  - examples/redux-thunk-example/node_modules
-
 install:
-  - npm install
+  - npm ci
 
 script:
   - npm run build

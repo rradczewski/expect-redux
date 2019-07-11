@@ -11,7 +11,7 @@
     "build:flow": "flow-copy-source -v src dist",
     "prune": "npm prune --production",
     "test": "jest",
-    "examples:install": "set -o errexit; for i in $(ls examples/); do (cd examples/$i; npm install); done",
+    "examples:install": "set -o errexit; for i in $(ls examples/); do (cd examples/$i;  ([ \"$CI\" -eq 1 ] && echo ci || echo install)); done",
     "examples:test": "set -o errexit; for i in $(ls examples/); do (cd examples/$i; npm test); done",
     "preversion": "npm test",
     "version": "npm run build && git add -Af dist",
