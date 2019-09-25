@@ -14,8 +14,7 @@
     "examples:install": "set -o errexit; for i in $(ls examples/); do (cd examples/$i; npm install); done",
     "examples:test": "set -o errexit; for i in $(ls examples/); do (cd examples/$i; npm test); done",
     "preversion": "npm test",
-    "version": "npm run build && git add -Af dist",
-    "postversion": "git push origin && git push origin --tags"
+    "version": "npm run build && git add -Af dist"
   },
   "repository": {
     "type": "git",
