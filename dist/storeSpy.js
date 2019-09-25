@@ -27,7 +27,7 @@ var storeEnhancer = function (nextCreateStore) { return function (reducer, initi
     var unregisterMatcher = function (matcher) {
         matchers.delete(matcher);
     };
-    return __assign({}, store, { actions: actions,
+    return __assign(__assign({}, store), { actions: actions,
         registerMatcher: registerMatcher,
         unregisterMatcher: unregisterMatcher });
 }; };

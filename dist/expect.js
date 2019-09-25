@@ -37,6 +37,6 @@ expectRedux.enableBetterErrorMessages = function (options) {
 };
 expectRedux.options = { betterErrorMessagesTimeout: false };
 expectRedux.configure = function (options) {
-    return (expectRedux.options = __assign({}, expectRedux.options, options));
+    return (expectRedux.options = __assign(__assign({}, expectRedux.options), options));
 };
 exports.default = expectRedux;
