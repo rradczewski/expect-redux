@@ -1,7 +1,7 @@
 ![Logo](https://raw.githubusercontent.com/rradczewski/expect-redux/HEAD/docs/logo.svg?sanitize=true)
 
 [![npm version](https://badge.fury.io/js/expect-redux.svg)](https://badge.fury.io/js/expect-redux)
-[![CI](https://travis-ci.org/rradczewski/expect-redux.svg)](https://travis-ci.org/rradczewski/expect-redux)
+[![CircleCI](https://circleci.com/gh/rradczewski/expect-redux.svg?style=svg)](https://circleci.com/gh/rradczewski/expect-redux)
 [![Deps](https://david-dm.org/rradczewski/expect-redux.svg)](https://david-dm.org/rradczewski/expect-redux) [![DevDeps](https://david-dm.org/rradczewski/expect-redux/dev-status.svg)](https://david-dm.org/rradczewski/expect-redux)
 
 # expect-redux - better interaction testing for redux
