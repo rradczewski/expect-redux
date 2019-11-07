@@ -16,6 +16,7 @@ it("will increase the counter", async () => {
 
   await act(async () => {
     component.find("#increase-remotely").simulate("click");
+    await new Promise(resolve => setTimeout(resolve))
   });
 
   return expectRedux(store)
