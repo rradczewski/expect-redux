@@ -43,6 +43,8 @@ In order to record actions that are dispatched to it, your store only needs to b
 
 ```js
 // store.js
+import { createStore, compose } from "redux";
+
 export const configureStore = (extraStoreEnhancers = []) => {
   const storeEnhancers = [
     ,
@@ -55,7 +57,7 @@ export const configureStore = (extraStoreEnhancers = []) => {
 };
 ```
 
-With that, just add `storeSpy` from `expect-redux` as an `extraStoreEnhancer` in the setup of your tests:
+With that, you can add `storeSpy` from `expect-redux` as an `extraStoreEnhancer` in the setup of your tests:
 
 ```js
 import { configureStore } from "./store.js";
