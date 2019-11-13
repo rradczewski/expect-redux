@@ -39,7 +39,9 @@ class NotActionMatcher extends ActionMatcher {
   
   ${printTable(actions)}\n`;
 
-    this.reject(new Error(message));
+    const error = new Error(message);
+    error.stack = error.name + ": " + error.message;
+    this.reject(error);
   }
 
   and(
@@ -68,11 +70,13 @@ class EmptyNotActionMatcher extends NotActionMatcher {
   ): NotActionMatcher {
     this.store.unregisterMatcher(this);
 
-    return new NotActionMatcher(otherPredicate, otherErrorMessage, this.store, <
-      any
-    >this.timeout);
+    return new NotActionMatcher(
+      otherPredicate,
+      otherErrorMessage,
+      this.store,
+      <any>this.timeout
+    );
   }
 }
 
 export { NotActionMatcher };
-

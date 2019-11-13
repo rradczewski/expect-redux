@@ -62,8 +62,9 @@ class ActionMatcher implements PromiseLike {
 The following actions got dispatched to the store instead (${actions.length}):
 
 ${printTable(actions)}\n`;
-
-    this.reject(new Error(message));
+    const error = new Error(message);
+    error.stack = error.name+": "+error.message;
+    this.reject(error);
   }
 
   destroy(): void {

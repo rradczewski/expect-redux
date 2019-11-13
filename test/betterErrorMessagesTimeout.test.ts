@@ -23,6 +23,7 @@ describe("betterErrorMessagesTimeout", () => {
           .matching(foo => foo === true);
         fail("No error thrown");
       } catch (e) {
+        expect(e.stack).not.toContain("at ");
         expect(e.message).toMatch(
           /Expected action of type '\w+' and passing predicate '[^']+' to be dispatched to store, but did not happen in \d+ms/
         );

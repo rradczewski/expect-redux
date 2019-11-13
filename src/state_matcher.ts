@@ -75,8 +75,10 @@ ${JSON.stringify(this.store.getState(), undefined, 2) || ""}
 The following actions got dispatched to the store (${actions.length}):
 
 ${printTable(actions)}\n`;
-
-    this.reject(new Error(message));
+    
+    const error = new Error(message);
+    error.stack = error.name+": "+error.message;
+    this.reject(error);
   }
 
   test() {
