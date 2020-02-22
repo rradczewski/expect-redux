@@ -32,7 +32,9 @@ var NotActionMatcher = /** @class */ (function (_super) {
     NotActionMatcher.prototype.fail = function () {
         var actions = this.store.actions;
         var message = "Expected action " + this.errorMessage + " not to be dispatched to store, but was dispatched.\n  \n  The following actions got dispatched to the store (" + actions.length + "):\n  \n  " + _printTable_1.printTable(actions) + "\n";
-        this.reject(new Error(message));
+        var error = new Error(message);
+        error.stack = error.name + ": " + error.message;
+        this.reject(error);
     };
     NotActionMatcher.prototype.and = function (otherPredicate, otherErrorMessage) {
         this.destroy();

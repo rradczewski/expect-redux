@@ -53,7 +53,9 @@ var StateMatcher = /** @class */ (function () {
     StateMatcher.prototype.onTimeout = function () {
         var actions = this.store.actions;
         var message = "State did not match expected state.\n\nExpectation:\n" + this.errorMessage + "\n\nActual state:\n" + (JSON.stringify(this.store.getState(), undefined, 2) || "") + "\n\nThe following actions got dispatched to the store (" + actions.length + "):\n\n" + _printTable_1.printTable(actions) + "\n";
-        this.reject(new Error(message));
+        var error = new Error(message);
+        error.stack = error.name + ": " + error.message;
+        this.reject(error);
     };
     StateMatcher.prototype.test = function () {
         if (this.predicate(this.store.getState())) {

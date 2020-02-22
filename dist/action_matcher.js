@@ -45,7 +45,9 @@ var ActionMatcher = /** @class */ (function () {
     ActionMatcher.prototype.onTimeout = function () {
         var actions = this.store.actions;
         var message = "Expected action " + this.errorMessage + " to be dispatched to store, but did not happen in " + this.timeout + "ms.\n\nThe following actions got dispatched to the store instead (" + actions.length + "):\n\n" + _printTable_1.printTable(actions) + "\n";
-        this.reject(new Error(message));
+        var error = new Error(message);
+        error.stack = error.name + ": " + error.message;
+        this.reject(error);
     };
     ActionMatcher.prototype.destroy = function () {
         this.store.unregisterMatcher(this);
