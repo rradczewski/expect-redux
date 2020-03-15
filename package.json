@@ -8,7 +8,6 @@
     "build": "run-s test build:clean build:js prune examples:install examples:test",
     "build:js": "tsc",
     "build:clean": "rimraf dist",
-    "build:flow": "flow-copy-source -v src dist",
     "prune": "npm prune --production",
     "test": "jest",
     "examples:install": "set -o errexit; for i in $(ls examples/); do (cd examples/$i; npm install); done",
