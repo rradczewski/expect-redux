@@ -1,6 +1,6 @@
+import "@testing-library/jest-dom/extend-expect";
 import React from "react";
-import { act } from "react-dom/test-utils";
-import { mount } from "enzyme";
+import { act, fireEvent, render, screen } from "@testing-library/react";
 import { expectRedux, storeSpy } from "expect-redux";
 
 import App from "./App";
@@ -9,14 +9,13 @@ import { configureStore } from "./store";
 it("will increase the counter", async () => {
   const services = {
     counterService: () =>
-      new Promise(resolve => setTimeout(() => resolve(2), 0))
+      new Promise((resolve) => setTimeout(() => resolve(2), 0)),
   };
   const store = configureStore(services, [storeSpy]);
-  const component = mount(<App store={store} />);
+  render(<App store={store} />);
 
   await act(async () => {
-    component.find("#increase-remotely").simulate("click");
-    await new Promise(resolve => setTimeout(resolve))
+    fireEvent.click(screen.getByTestId("increase-remotely"));
   });
 
   return expectRedux(store)

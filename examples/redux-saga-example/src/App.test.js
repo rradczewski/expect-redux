@@ -1,6 +1,6 @@
+import "@testing-library/jest-dom/extend-expect";
 import React from "react";
-import { act } from "react-dom/test-utils";
-import { mount } from "enzyme";
+import { act, fireEvent, render, screen } from "@testing-library/react";
 import { expectRedux, storeSpy } from "expect-redux";
 
 import App from "./App";
@@ -12,24 +12,26 @@ jest.mock("./Api");
 describe("App Component", () => {
   beforeEach(() => jest.resetAllMocks());
 
-  let store, component;
+  let store;
+  let container;
   beforeEach(() => {
     store = configureStore([storeSpy]);
-    component = mount(<App store={store} />);
+    const rendered = render(<App store={store} />);
+    container = rendered.container;
   });
 
-  const fillInUserName = value =>
-    act(async () =>
-      component.find("#username").simulate("change", { target: { value } })
+  const fillInUserName = async (value) =>
+    await act(async () =>
+      fireEvent.change(screen.getByTestId("username"), { target: { value } })
     );
 
-  const fillInPassword = value =>
-    act(async () =>
-      component.find("#password").simulate("change", { target: { value } })
+  const fillInPassword = async (value) =>
+    await act(async () =>
+      fireEvent.change(screen.getByTestId("password"), { target: { value } })
     );
 
-  const submitForm = () =>
-    act(async () => component.find("#login").simulate("click", { button: 0 }));
+  const submitForm = async () =>
+    await act(async () => fireEvent.click(screen.getByTestId("login")));
 
   describe("logging in", () => {
     it("will work with correct credentials", async () => {
@@ -39,19 +41,15 @@ describe("App Component", () => {
       await fillInPassword("MY_PASSWORD");
       await submitForm();
 
-      await expectRedux(store)
-        .toDispatchAnAction()
-        .matching({
-          type: "LOGIN_REQUEST",
-          user: "MY_USER",
-          password: "MY_PASSWORD"
-        });
+      await expectRedux(store).toDispatchAnAction().matching({
+        type: "LOGIN_REQUEST",
+        user: "MY_USER",
+        password: "MY_PASSWORD",
+      });
 
-      await expectRedux(store)
-        .toDispatchAnAction()
-        .ofType("LOGIN_SUCCESS");
+      await expectRedux(store).toDispatchAnAction().ofType("LOGIN_SUCCESS");
 
-      expect(component.text()).toContain("Thanks for logging in.");
+      expect(container).toHaveTextContent("Thanks for logging in.");
     });
 
     it("won't work if you supply bad credentials", async () => {
@@ -61,11 +59,9 @@ describe("App Component", () => {
       await fillInPassword("MY_WRONG_PASSWORD");
       await submitForm();
 
-      await expectRedux(store)
-        .toDispatchAnAction()
-        .ofType("LOGIN_ERROR");
+      await expectRedux(store).toDispatchAnAction().ofType("LOGIN_ERROR");
 
-      expect(component.text()).toContain("Invalid credentials");
+      expect(container).toHaveTextContent("Invalid credentials");
     });
   });
 
@@ -77,23 +73,17 @@ describe("App Component", () => {
       await fillInPassword("MY_PASSWORD");
       await submitForm();
 
-      await expectRedux(store)
-        .toDispatchAnAction()
-        .ofType("LOGIN_SUCCESS");
-
-      component.update();
+      await expectRedux(store).toDispatchAnAction().ofType("LOGIN_SUCCESS");
     });
 
     it("works when logged in", async () => {
-      act(() => {
-        component.find("#logout").simulate("click", { button: 0 });
+      await act(async () => {
+        fireEvent.click(screen.getByTestId("logout"));
       });
 
-      await expectRedux(store)
-        .toDispatchAnAction()
-        .ofType("LOGOUT");
+      await expectRedux(store).toDispatchAnAction().ofType("LOGOUT");
 
-      expect(component.text()).toContain("Please login below");
+      expect(container).toHaveTextContent("Please login below");
     });
   });
 });

@@ -26,8 +26,8 @@
     "not op_mini all"
   ],
   "devDependencies": {
-    "enzyme": "^3.11.0",
-    "enzyme-adapter-react-16": "^1.15.6",
+    "@testing-library/react": "^11.2.5",
+    "@testing-library/jest-dom": "^5.11.9",
     "expect-redux": "file:../../"
   }
 }

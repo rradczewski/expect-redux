@@ -4,10 +4,13 @@ import { connect } from "react-redux";
 class App extends React.Component {
   state = {
     username: "",
-    password: ""
+    password: "",
   };
 
-  tryLogin = () => this.props.loginRequest(this.state.username, this.state.password);
+  tryLogin = (e) => {
+    e.preventDefault();
+    return this.props.loginRequest(this.state.username, this.state.password);
+  };
 
   render() {
     const { isLoggedIn, loginError } = this.props;
@@ -17,7 +20,9 @@ class App extends React.Component {
         {isLoggedIn ? (
           <div>
             <p>Thanks for logging in.</p>
-            <button id="logout" onClick={this.props.logout}>Logout</button>
+            <button data-testid="logout" onClick={this.props.logout}>
+              Logout
+            </button>
           </div>
         ) : (
           <div>
@@ -25,18 +30,20 @@ class App extends React.Component {
             <p>Please login below</p>
             <form onSubmit={this.tryLogin}>
               <input
-                id="username"
+                data-testid="username"
                 type="text"
                 value={username}
-                onChange={e => this.setState({ username: e.target.value })}
+                onChange={(e) => this.setState({ username: e.target.value })}
               />
               <input
-                id="password"
+                data-testid="password"
                 type="password"
                 value={password}
-                onChange={e => this.setState({ password: e.target.value })}
+                onChange={(e) => this.setState({ password: e.target.value })}
               />
-              <button id="login" onClick={this.tryLogin}>Login</button>
+              <button data-testid="login" onClick={this.tryLogin}>
+                Login
+              </button>
             </form>
           </div>
         )}
@@ -45,13 +52,13 @@ class App extends React.Component {
   }
 }
 
-const mapStateToProps = ({ isLoggedIn, loginError }) => ({ isLoggedIn, loginError });
+const mapStateToProps = ({ isLoggedIn, loginError }) => ({
+  isLoggedIn,
+  loginError,
+});
 const mapDispatchToProps = {
   loginRequest: (user, password) => ({ type: "LOGIN_REQUEST", user, password }),
-  logout: () => ({ type: "LOGOUT" })
+  logout: () => ({ type: "LOGOUT" }),
 };
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(App);
+export default connect(mapStateToProps, mapDispatchToProps)(App);
