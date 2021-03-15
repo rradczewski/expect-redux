@@ -19,11 +19,11 @@ workflows:
   build:
     jobs:
       - build:
-          name: "carbon"
-          node_image: "circleci/node:carbon"
-      - build:
           name: "dubnium"
           node_image: "circleci/node:dubnium"
       - build:
           name: "erbium"
           node_image: "circleci/node:erbium"
+      - build:
+          name: "fermium"
+          node_image: "circleci/node:fermium"
