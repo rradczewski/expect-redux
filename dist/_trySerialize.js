@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.trySerialize = function (o) {
+exports.trySerialize = void 0;
+var trySerialize = function (o) {
     try {
         return JSON.stringify(o);
     }
@@ -8,3 +9,4 @@ exports.trySerialize = function (o) {
         return "{ Unserializable Object: " + e + " }";
     }
 };
+exports.trySerialize = trySerialize;

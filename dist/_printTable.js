@@ -11,6 +11,7 @@ var __rest = (this && this.__rest) || function (s, e) {
     return t;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.printTable = void 0;
 var sprintf_js_1 = require("sprintf-js");
 var _trySerialize_1 = require("./_trySerialize");
 var printTable = function (actions) {
