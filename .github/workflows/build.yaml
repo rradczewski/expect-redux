@@ -1,0 +1,29 @@
+name: Build
+
+on: [push, workflow_dispatch]
+
+jobs:
+  get-lts:
+    runs-on: ubuntu-latest
+    steps:
+      - id: get
+        uses: msimerson/node-lts-versions@v1
+    outputs:
+      active: ${{ steps.get.outputs.active }}
+      lts: ${{ steps.get.outputs.lts }}
+      min: ${{ steps.get.outputs.min }}
+
+  build:
+    runs-on: ubuntu-latest
+    needs: get-lts
+    strategy:
+      matrix:
+        node-version: ${{ fromJson(needs.get-lts.outputs.active) }}
+      fail-fast: false
+    steps:
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+      - uses: actions/checkout@v4
+      - run: npm ci
+      - run: npm run build
