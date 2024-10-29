@@ -45,7 +45,7 @@
   "homepage": "https://github.com/rradczewski/expect-redux#readme",
   "devDependencies": {
     "@types/jest": "^25.1.4",
-    "@types/ramda": "^0.26.44",
+    "@types/ramda": "^0.30.0",
     "jest": "^25.1.0",
     "nodemon": "^3.0.0",
     "npm-run-all2": "^7.0.0",
@@ -55,7 +55,7 @@
     "typescript": "^3.8.3"
   },
   "dependencies": {
-    "ramda": "^0.27.0",
+    "ramda": "^0.30.0",
     "sprintf-js": "^1.1.2"
   }
 }
