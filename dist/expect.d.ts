@@ -13,10 +13,10 @@ declare const expectRedux: {
         betterErrorMessagesTimeout: number | false;
     };
 };
-declare type BetterErrorMessagesOptions = {
+type BetterErrorMessagesOptions = {
     timeout: number;
 };
-declare type Options = {
+type Options = {
     betterErrorMessagesTimeout: number | false;
 };
 export default expectRedux;

@@ -55,15 +55,14 @@ class ActionMatcher implements PromiseLike {
   onTimeout() {
     const actions = this.store.actions;
 
-    const message = `Expected action ${
-      this.errorMessage
-    } to be dispatched to store, but did not happen in ${this.timeout}ms.
+    const message = `Expected action ${this.errorMessage
+      } to be dispatched to store, but did not happen in ${this.timeout}ms.
 
 The following actions got dispatched to the store instead (${actions.length}):
 
 ${printTable(actions)}\n`;
     const error = new Error(message);
-    error.stack = error.name+": "+error.message;
+    error.stack = error.name + ": " + error.message;
     this.reject(error);
   }
 
@@ -112,7 +111,7 @@ ${printTable(actions)}\n`;
   }
 
   ofType(type: string) {
-    return this.and(propEq("type", type), `of type '${type}'`);
+    return this.and(propEq(type, "type"), `of type '${type}'`);
   }
 
   matching(

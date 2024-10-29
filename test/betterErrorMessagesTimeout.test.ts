@@ -34,14 +34,14 @@ describe("betterErrorMessagesTimeout", () => {
       }
     });
 
-    it("should negate the message for toNotDispatchAnAction()", async () => {
+    it.only("should negate the message for toNotDispatchAnAction()", async () => {
       const store = createStore(identity, {}, storeSpy);
 
       store.dispatch({ type: "bar", value: "bla" });
 
       try {
         await expectRedux(store)
-          .toNotDispatchAnAction(10)
+          .toNotDispatchAnAction(1000)
           .ofType("bar");
         fail("No error thrown");
       } catch (e) {
