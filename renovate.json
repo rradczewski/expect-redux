@@ -8,6 +8,7 @@
     "replacements:all",
     "workarounds:all"
   ],
+  "additionalBranchPrefix": "{{packageFileDir}}-",
   "dependencyDashboard": true,
   "automerge": true,
   "automergeType": "branch"
