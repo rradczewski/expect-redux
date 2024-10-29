@@ -34,7 +34,7 @@ describe("betterErrorMessagesTimeout", () => {
       }
     });
 
-    it.only("should negate the message for toNotDispatchAnAction()", async () => {
+    it("should negate the message for toNotDispatchAnAction()", async () => {
       const store = createStore(identity, {}, storeSpy);
 
       store.dispatch({ type: "bar", value: "bla" });
