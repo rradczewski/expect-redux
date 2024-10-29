@@ -2,7 +2,7 @@ import { propEq } from "ramda";
 import { ActionMatcher } from "../src/action_matcher";
 import { assertPromiseDidNotResolve } from "./_assertPromiseDidNotResolve";
 
-const dummyTimeout = () => {};
+const dummyTimeout = () => { };
 
 const dummyStore = {
   actions: [],
@@ -62,7 +62,7 @@ describe("matching", () => {
   describe("matching(predicate)", () => {
     it("should match the predicate", () => {
       const promise = ActionMatcher.empty(dummyStore, false).matching(
-        propEq("attrA", "FOO")
+        propEq("FOO", "attrA")
       );
       promise.test({ attrA: "FOO" });
       return promise;
@@ -72,7 +72,7 @@ describe("matching", () => {
       const promise = ActionMatcher.empty(dummyStore, false).matching({
         attrA: "FOO"
       });
-      promise.test(propEq("attrA", "SOMETHING ELSE"));
+      promise.test(propEq("SOMETHING ELSE", "attrA"));
       return assertPromiseDidNotResolve(promise);
     });
 
@@ -98,7 +98,7 @@ describe("matching", () => {
       const promise = ActionMatcher.empty(dummyStore, false).asserting(({ attrA }) =>
         expect(attrA).toEqual("FOO")
       );
-      promise.test(propEq("attrA", "SOMETHING ELSE"));
+      promise.test(propEq("SOMETHING ELSE", "attrA"));
       return assertPromiseDidNotResolve(promise);
     });
 
