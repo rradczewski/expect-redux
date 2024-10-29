@@ -3,16 +3,19 @@ var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.StateMatcher = void 0;
 var ramda_1 = require("ramda");
 var _printTable_1 = require("./_printTable");
 var StateMatcher = /** @class */ (function () {
@@ -52,7 +55,7 @@ var StateMatcher = /** @class */ (function () {
     };
     StateMatcher.prototype.onTimeout = function () {
         var actions = this.store.actions;
-        var message = "State did not match expected state.\n\nExpectation:\n" + this.errorMessage + "\n\nActual state:\n" + (JSON.stringify(this.store.getState(), undefined, 2) || "") + "\n\nThe following actions got dispatched to the store (" + actions.length + "):\n\n" + _printTable_1.printTable(actions) + "\n";
+        var message = "State did not match expected state.\n\nExpectation:\n".concat(this.errorMessage, "\n\nActual state:\n").concat(JSON.stringify(this.store.getState(), undefined, 2) || "", "\n\nThe following actions got dispatched to the store (").concat(actions.length, "):\n\n").concat((0, _printTable_1.printTable)(actions), "\n");
         var error = new Error(message);
         error.stack = error.name + ": " + error.message;
         this.reject(error);
@@ -64,7 +67,7 @@ var StateMatcher = /** @class */ (function () {
     };
     StateMatcher.prototype.matching = function (expectedState) {
         this.destroy();
-        return new StateMatcher(ramda_1.equals(expectedState), "equaling " + (JSON.stringify(expectedState) || ""), this.store, this.timeout);
+        return new StateMatcher((0, ramda_1.equals)(expectedState), "equaling ".concat(JSON.stringify(expectedState) || ""), this.store, this.timeout);
     };
     StateMatcher.prototype.withSubtree = function (selector) {
         this.destroy();
@@ -92,11 +95,11 @@ var SelectingStateMatcher = /** @class */ (function (_super) {
     }
     SelectingStateMatcher.prototype.matching = function (expectedState) {
         this.destroy();
-        return new SelectingStateMatcher(this.selector, ramda_1.equals(expectedState), "substate equaling " + (JSON.stringify(expectedState) || ""), this.store, this.timeout);
+        return new SelectingStateMatcher(this.selector, (0, ramda_1.equals)(expectedState), "substate equaling ".concat(JSON.stringify(expectedState) || ""), this.store, this.timeout);
     };
     SelectingStateMatcher.prototype.withSubtree = function (selector) {
         this.destroy();
-        return SelectingStateMatcher.empty(ramda_1.pipe(this.selector, selector), this.store, this.timeout);
+        return SelectingStateMatcher.empty((0, ramda_1.pipe)(this.selector, selector), this.store, this.timeout);
     };
     SelectingStateMatcher.prototype.test = function () {
         if (this.predicate(this.selector(this.store.getState()))) {

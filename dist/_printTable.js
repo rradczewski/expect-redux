@@ -11,14 +11,15 @@ var __rest = (this && this.__rest) || function (s, e) {
     return t;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.printTable = void 0;
 var sprintf_js_1 = require("sprintf-js");
 var _trySerialize_1 = require("./_trySerialize");
 var printTable = function (actions) {
     var longestMessage = actions.reduce(function (last, action) { return Math.max(last, action.type.length); }, 0);
     var printAction = function (_a) {
         var type = _a.type, props = __rest(_a, ["type"]);
-        return sprintf_js_1.sprintf("\t%" + (longestMessage + 3) + "s\t%s", type, _trySerialize_1.trySerialize(props));
+        return (0, sprintf_js_1.sprintf)("\t%".concat(longestMessage + 3, "s\t%s"), type, (0, _trySerialize_1.trySerialize)(props));
     };
-    return sprintf_js_1.sprintf("\t%" + (longestMessage + 3) + "s\t%s", "TYPE", "PROPS") + "\n" + actions.map(printAction).join("\n");
+    return "".concat((0, sprintf_js_1.sprintf)("\t%".concat(longestMessage + 3, "s\t%s"), "TYPE", "PROPS"), "\n").concat(actions.map(printAction).join("\n"));
 };
 exports.printTable = printTable;

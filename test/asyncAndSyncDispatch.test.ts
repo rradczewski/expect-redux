@@ -81,7 +81,7 @@ describe("toDispatchAnAction()", () => {
     testSyncAndAsync({ type: "TEST_ACTION", payload: 42 }, (store, done) =>
       expectRedux(store)
         .toDispatchAnAction()
-        .matching(propEq("payload", 42))
+        .matching(propEq(42, "payload"))
         .then(done, done)
     );
 
@@ -95,7 +95,7 @@ describe("toDispatchAnAction()", () => {
 
         expectRedux(store)
           .toDispatchAnAction()
-          .matching(propEq("payload", 43))
+          .matching(propEq(43, "payload"))
           .then(fail, fail);
 
         // Finish successfully after dispatching the action
@@ -136,7 +136,7 @@ describe("toDispatchAnAction()", () => {
       expectRedux(store)
         .toDispatchAnAction()
         .ofType("TEST_ACTION")
-        .matching(propEq("payload", 42))
+        .matching(propEq(42, "payload"))
         .then(() => done(), done)
     );
 
@@ -158,7 +158,7 @@ describe("toDispatchAnAction()", () => {
       expectRedux(store)
         .toDispatchAnAction()
         .ofType("TEST_ACTION_1")
-        .matching(propEq("payload", 2))
+        .matching(propEq(2, "payload"))
         .then(fail);
 
       setTimeout(() => (failed ? undefined : done()), 10);
@@ -175,7 +175,7 @@ describe("toDispatchAnAction()", () => {
         expectRedux(store)
           .toDispatchAnAction()
           .ofType("TEST_ACTION")
-          .matching(propEq("payload", 43))
+          .matching(propEq(43, "payload"))
           .then(fail, fail);
 
         // Finish successfully after dispatching the action
