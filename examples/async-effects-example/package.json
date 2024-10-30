@@ -9,8 +9,8 @@
   "author": "Raimo Radczewski <raimoradczewski@googlemail.com>",
   "license": "MIT",
   "dependencies": {
-    "redux": "^4.0.5",
-    "redux-thunk": "^2.3.0"
+    "redux": "^5.0.1",
+    "redux-thunk": "^3.1.0"
   },
   "jest": {
     "setupFiles": [
@@ -18,8 +18,7 @@
     ]
   },
   "devDependencies": {
-    "babel-core": "^7.0.0-bridge.0",
     "expect-redux": "file:../../",
-    "jest": "^25.1.0"
+    "jest": "^29.7.0"
   }
 }

@@ -1,27 +1,28 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import React from "react";
+import { connect } from "react-redux";
 
 import {
   increaseCounterLocallyActionCreator,
-  increaseCounterRemotely
-} from './store';
+  increaseCounterRemotely,
+} from "./store";
 
 const App = ({ counter, increaseLocally, increaseRemotely }) => (
   <div>
-    Current counter value is <span id="counter-value">{counter}</span>. Want to increase it
-    <button id="increase-locally" onClick={increaseLocally}>
+    Current counter value is <span data-testid="counter-value">{counter}</span>. Want to
+    increase it
+    <button data-testid="increase-locally" onClick={increaseLocally}>
       locally
     </button>
-    {' or '}
-    <button id="increase-remotely" onClick={increaseRemotely}>
+    {" or "}
+    <button data-testid="increase-remotely" onClick={increaseRemotely}>
       on the server
     </button>
   </div>
 );
 
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = (dispatch) => ({
   increaseLocally: () => dispatch(increaseCounterLocallyActionCreator),
-  increaseRemotely: () => dispatch(increaseCounterRemotely)
+  increaseRemotely: () => dispatch(increaseCounterRemotely),
 });
 
 export default connect(({ counter }) => ({ counter }), mapDispatchToProps)(App);

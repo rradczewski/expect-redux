@@ -17,7 +17,7 @@ class App extends React.Component {
         {isLoggedIn ? (
           <div>
             <p>Thanks for logging in.</p>
-            <button id="logout" onClick={this.props.logout}>Logout</button>
+            <button data-testid="logout" onClick={this.props.logout}>Logout</button>
           </div>
         ) : (
           <div>
@@ -25,18 +25,18 @@ class App extends React.Component {
             <p>Please login below</p>
             <form onSubmit={this.tryLogin}>
               <input
-                id="username"
+                data-testid="username"
                 type="text"
                 value={username}
                 onChange={e => this.setState({ username: e.target.value })}
               />
               <input
-                id="password"
+                data-testid="password"
                 type="password"
                 value={password}
                 onChange={e => this.setState({ password: e.target.value })}
               />
-              <button id="login" onClick={this.tryLogin}>Login</button>
+              <button data-testid="login" onClick={this.tryLogin}>Login</button>
             </form>
           </div>
         )}
