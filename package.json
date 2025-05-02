@@ -58,7 +58,7 @@
     "@types/ramda": "^0.30.0",
     "jest": "^29.0.0",
     "nodemon": "^3.0.0",
-    "npm-run-all2": "^7.0.0",
+    "npm-run-all2": "^8.0.0",
     "redux": "^5.0.0",
     "rimraf": "^6.0.0",
     "ts-jest": "^29.0.0",
